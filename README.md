@@ -57,7 +57,7 @@ Use michael.hamburger@mail.de for certbot
 run certbot for domain ...
 IMPORTANT NOTES:
  - Congratulations! Your certificate and chain have been saved at
-   /etc/letsencrypt/live/haembi.de/fullchain.pem. Your cert will
+   /etc/letsencrypt/live/domain1.com/fullchain.pem. Your cert will
    expire on 2017-04-07. To obtain a new or tweaked version of this
    certificate in the future, simply run certbot again. To
    non-interactively renew *all* of your certificates, run "certbot
