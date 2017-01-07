@@ -2,7 +2,7 @@ docker-flow-letsencrypt
 ==================
 
 * [Introduction](#introduction)
-* [How does it work](#how)
+* [How does it work](#how-does-it-work)
 * [Usage](#usage)
 * [Feedback and Contribution](#feedback-and-contribution)
 
