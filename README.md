@@ -68,4 +68,6 @@ IMPORTANT NOTES:
 
 If you want to use nano inside the container you need to run ```export TERM=xterm ```.
 
-## Feedback and Contribution
+## Feedback
+
+Thanks for using docker-flow-letsencrypt. If you have problems or some ideas how this can be made better feel free to create a new issue. Thanks to Viktor Farcic for his help and docker flow :)
