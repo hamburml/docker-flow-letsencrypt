@@ -34,6 +34,3 @@ for i in $DOMAIN;
          "$PROXY_ADDRESS:8080/v1/docker-flow-proxy/cert?certName=$dom.combined.pem&distribute=true"
 
    done
-
-#echo $domains
-#certbot certonly --standalone --email haembi@gmx.de -d haembi.de -d www.haembi.de -d www.michael-hamburger.de -d michael-hamburger.de --agree-tos --staging --standalone-supported-challenges http-01
