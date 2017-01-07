@@ -15,16 +15,12 @@ for i in $DOMAIN;
    # if folder exists, make certbot renew, if folder doesn't exist, make certbot certonly
       DOMAINDIRECTORY="/etc/letsencrypt/live/$i";
       dom=$i
-      if [ ! -d "$DOMAINDIRECTORY" ]; then
-         printf "run certbot for domain $dom \n";
-         certbot certonly --standalone --non-interactive --keep-until-expiring --email $CERTBOTEMAIL -d $dom --agree-tos $staging --standalone-supported-challenges http-01
-         printf "certificate created\n\n"
-      else
-         printf "certificate for domain $dom exists \n\n"
-      fi
+      
+      printf "run certbot for domain $dom \n";
+      certbot certonly --standalone --non-interactive --keep-until-expiring --email $CERTBOTEMAIL -d $dom --agree-tos $staging --standalone-supported-challenges http-01
+      printf "certificate created\n\n"
 
       #concat the certificate
-
       printf "combine cert.pem chainpem and privkey.pem to $dom.combined.pem\n"
       cat $DOMAINDIRECTORY/cert.pem $DOMAINDIRECTORY/chain.pem $DOMAINDIRECTORY/privkey.pem > $DOMAINDIRECTORY/$dom.combined.pem
       printf "send $dom.combined.pem to docker flow: proxy\n\n"
