@@ -16,13 +16,16 @@ https://hub.docker.com/r/hamburml/docker-flow-letsencrypt/
 ## How does it work
 
 This docker image uses certbot, curl and cron to create and renew your letsencrypt certificates.
-    
+Through environment variables you can set the domains certbot should create certificates, which email should be used and the proxy_address.
+
+When the image starts, the certbot.sh script runs and creates/renews the certificates. The script also combines the cert.pem, chain.pem and privkey.pem to a domainname.combined.pem file. This file is send via curl -i -XPUT to the proxy.
+The script is also symlinked in /etc/cron.daily and cron runs via supervisord.
 
 ## Usage
 
 ### Build
 ```
-docker build -t hamburml/cron-test .
+docker build -t hamburml/docker-flow-letsencrypt .
 ```
 
 ### Docker Service
@@ -31,16 +34,12 @@ docker build -t hamburml/cron-test .
 docker service create --name letsencrypt-companion \
     --label com.df.notify=true \
     --label com.df.distribute=true \
-    --label com.df.servicePath.1=/.well-known/acme-challenge \
-    --label com.df.servicePath.2=/.well-known/acme-challenge \
-    -e DOMAIN="haembi.de,www.haembi.de,www.michael-hamburger.de,michael-hamburger.de,owncloud.haembi.de" \
+    --label com.df.servicePath=/.well-known/acme-challenge \
+    --label com.df.port=80 \
+    -e DOMAIN="domain1.com,www.domain1.com,www.domain2.de,domain2.de,subdomain.domain2.de" \
     -e CERTBOTEMAIL="michael.hamburger@mail.de" \
     -e PROXY_ADDRESS="proxy" \
     --network proxy \
-    --label com.df.port.1=80 \
-    --label com.df.port.2=443 \
-    --label com.df.srcPort.1=80 \
-    --label com.df.srcPort.2=443 \
     --mount type=bind,source=/etc/letsencrypt,destination=/etc/letsencrypt hamburml/docker-flow-letsencrypt
 ```
 
