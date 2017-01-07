@@ -21,6 +21,8 @@ Through environment variables you can set the domains certbot should create cert
 When the image starts, the certbot.sh script runs and creates/renews the certificates. The script also combines the cert.pem, chain.pem and privkey.pem to a domainname.combined.pem file. This file is send via curl -i -XPUT to the proxy.
 The script is also symlinked in /etc/cron.daily and cron runs via supervisord.
 
+If you only want to test this image you should add ```-e CERTBOTMODE="staging"``` when creating the service to use the staging mode of letsencrypt.
+
 ## Usage
 
 ### Build
