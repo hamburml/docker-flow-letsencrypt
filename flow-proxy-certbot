@@ -1,0 +1,7 @@
+#!/bin/bash
+
+echo "start flow-proxy-certbot cronjob" > /var/log/flow-proxy-certbot.log
+
+certbot renew > /var/log/flow-proxy-certbot.log
+
+echo "end flow-proxy-certbot cronjob" > /var/log/flow-proxy-certbot.log
