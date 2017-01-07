@@ -41,5 +41,8 @@ docker service create --name letsencrypt-companion \
     --label com.df.srcPort.2=443 \
     --mount type=bind,source=/etc/letsencrypt,destination=/etc/letsencrypt hamburml/docker-flow-letsencrypt
 ```
+### Importent
+
+If you want to use nano inside the container you need to run ```export TERM=xterm ```.
 
 ## Feedback and Contribution
