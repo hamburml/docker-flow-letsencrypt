@@ -41,6 +41,26 @@ docker service create --name letsencrypt-companion \
     --label com.df.srcPort.2=443 \
     --mount type=bind,source=/etc/letsencrypt,destination=/etc/letsencrypt hamburml/docker-flow-letsencrypt
 ```
+
+### Docker Logs
+
+You can see the progress of the running service through the logs.
+
+```
+docker logs letsencrypt-companion....
+
+Generate certificates for domains: ....
+Use michael.hamburger@mail.de for certbot
+run certbot for domain ...
+IMPORTANT NOTES:
+ - Congratulations! Your certificate and chain have been saved at
+   /etc/letsencrypt/live/haembi.de/fullchain.pem. Your cert will
+   expire on 2017-04-07. To obtain a new or tweaked version of this
+   certificate in the future, simply run certbot again. To
+   non-interactively renew *all* of your certificates, run "certbot
+   renew"
+   ...
+```
 ### Importent
 
 If you want to use nano inside the container you need to run ```export TERM=xterm ```.
