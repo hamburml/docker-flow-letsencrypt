@@ -2,7 +2,7 @@ docker-flow-letsencrypt
 ==================
 
 * [Introduction](#introduction)
-* [How it's done](#how)
+* [How does it work](#how)
 * [Usage](#usage)
 * [Feedback and Contribution](#feedback-and-contribution)
 
@@ -11,7 +11,7 @@ docker-flow-letsencrypt
 This project is compatible with Docker: Flow Proxy and Docker: Swarm-Listener from https://github.com/vfarcic/docker-flow-proxy.
 It uses certbot to create and renew https certificates for your domains and stores the certificates inside /etc/letsencrypt on the running docker host (you should run the service always on the same host).
 
-## [How it's done](#how)
+## How does it work
 
 This docker image uses certbot, curl and cron to create and renew your letsencrypt certificates.
     
