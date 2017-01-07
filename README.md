@@ -39,7 +39,7 @@ docker service create --name letsencrypt-companion \
     --label com.df.servicePath=/.well-known/acme-challenge \
     --label com.df.port=80 \
     -e DOMAIN="domain1.com,www.domain1.com,www.domain2.de,domain2.de,subdomain.domain2.de" \
-    -e CERTBOTEMAIL="michael.hamburger@mail.de" \
+    -e CERTBOTEMAIL="email@email.com" \
     -e PROXY_ADDRESS="proxy" \
     --network proxy \
     --mount type=bind,source=/etc/letsencrypt,destination=/etc/letsencrypt hamburml/docker-flow-letsencrypt
