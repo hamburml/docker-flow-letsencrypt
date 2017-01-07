@@ -64,7 +64,7 @@ IMPORTANT NOTES:
    renew"
    ...
 ```
-### Importent
+### Important
 
 If you want to use nano inside the container you need to run ```export TERM=xterm ```.
 
