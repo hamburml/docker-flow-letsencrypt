@@ -47,6 +47,9 @@ docker service create --name letsencrypt-companion \
     --mount type=bind,source=/etc/letsencrypt,destination=/etc/letsencrypt hamburml/docker-flow-letsencrypt:latest
 ```
 
+You should always start the service on the same docker host. You must not scale it to two, this wouldn't make any sense!
+The certificates are only renewed when they are 60 days old or older.
+
 Important: DOMAIN_COUNT needs to be the number of Domains you want certificates generated. We need to obey lets encrypts rate limits! https://letsencrypt.org/docs/rate-limits/
 
 ### Docker Logs
@@ -54,7 +57,7 @@ Important: DOMAIN_COUNT needs to be the number of Domains you want certificates 
 You can see the progress of the running service through the logs.
 
 ```
-docker logs letsencrypt-companion....
+root@server # docker logs letsencrypt-companion....
 
 Generate certificates for domains: ....
 Use michael.hamburger@mail.de for certbot
@@ -67,6 +70,16 @@ IMPORTANT NOTES:
    non-interactively renew *all* of your certificates, run "certbot
    renew"
    ...
+```
+
+When you restart the service and the certificates can't be renewed
+
+```
+...
+-------------------------------------------------------------------------------
+Certificate not yet due for renewal; no action taken.
+-------------------------------------------------------------------------------
+...
 ```
 
 ## Feedback
