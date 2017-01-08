@@ -38,12 +38,16 @@ docker service create --name letsencrypt-companion \
     --label com.df.distribute=true \
     --label com.df.servicePath=/.well-known/acme-challenge \
     --label com.df.port=80 \
-    -e DOMAIN="domain1.com,www.domain1.com,www.domain2.de,domain2.de,subdomain.domain2.de" \
-    -e CERTBOTEMAIL="email@email.com" \
+    -e DOMAIN_1="('domain1.de' 'www.domain1.de' 'owncloud.haembi.de')"\
+    -e DOMAIN_2="('domain2.de' 'www.domain2.de')"\
+    -e DOMAIN_COUNT=2\
+    -e CERTBOTEMAIL="michael.hamburger@mail.de" \
     -e PROXY_ADDRESS="proxy" \
     --network proxy \
-    --mount type=bind,source=/etc/letsencrypt,destination=/etc/letsencrypt hamburml/docker-flow-letsencrypt
+    --mount type=bind,source=/etc/letsencrypt,destination=/etc/letsencrypt hamburml/docker-flow-letsencrypt:latest
 ```
+
+Important: DOMAIN_COUNT needs to be the number of Domains you want certificates generated. We need to obey lets encrypts rate limits! https://letsencrypt.org/docs/rate-limits/
 
 ### Docker Logs
 
@@ -64,9 +68,6 @@ IMPORTANT NOTES:
    renew"
    ...
 ```
-### Important
-
-If you want to use nano inside the container you need to run ```export TERM=xterm ```.
 
 ## Feedback
 
