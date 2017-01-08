@@ -38,7 +38,7 @@ docker service create --name letsencrypt-companion \
     --label com.df.distribute=true \
     --label com.df.servicePath=/.well-known/acme-challenge \
     --label com.df.port=80 \
-    -e DOMAIN_1="('domain1.de' 'www.domain1.de' 'owncloud.haembi.de')"\
+    -e DOMAIN_1="('domain1.de' 'www.domain1.de' 'subdomain1.domain1.de')"\
     -e DOMAIN_2="('domain2.de' 'www.domain2.de')"\
     -e DOMAIN_COUNT=2\
     -e CERTBOTEMAIL="michael.hamburger@mail.de" \
