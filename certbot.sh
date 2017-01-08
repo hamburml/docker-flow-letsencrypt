@@ -1,32 +1,53 @@
-#!/bin/sh
+#!/bin/bash
 
-echo "Generate certificates for domains:" $DOMAIN;
-echo "Use" $CERTBOTEMAIL  "for certbot";
+#colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
 
-#split domains and call certbot certonly for every domain
-IFS=',';
+printf "${GREEN}Generate certificates for domains: ${NC}\n";
+printf "Use $CERTBOTEMAIL for certbot\n";
+
 staging='';
-if [ "CERTBOTMODE" ]; then
+if [ "$CERTBOTMODE" ]; then
+  printf "${RED}Use staging environment of letsencrypt!${NC}";
   staging='--staging';
 fi
-for i in $DOMAIN;
-   do
-   # check if certificate already exists (can happen when this is the second time the service is run, check if folder exists)
-   # if folder exists, make certbot renew, if folder doesn't exist, make certbot certonly
-      DOMAINDIRECTORY="/etc/letsencrypt/live/$i";
-      dom=$i
-      
-      printf "run certbot for domain $dom \n";
-      certbot certonly --standalone --non-interactive --keep-until-expiring --email $CERTBOTEMAIL -d $dom --agree-tos $staging --standalone-supported-challenges http-01
-      printf "certificate created\n\n"
 
-      #concat the certificate
-      printf "combine cert.pem chainpem and privkey.pem to $dom.combined.pem\n"
-      cat $DOMAINDIRECTORY/cert.pem $DOMAINDIRECTORY/chain.pem $DOMAINDIRECTORY/privkey.pem > $DOMAINDIRECTORY/$dom.combined.pem
-      printf "send $dom.combined.pem to docker flow: proxy\n\n"
+#we need to be careful and don't reach the rate limits of letsencrypt https://letsencrypt.org/docs/rate-limits/
+#letsencrypt has a certificates per registered domain (20 per week) and a names per certificate (100 subdomains) limit
+#so we should create ONE certificiates for a certain domain and add all their subdomains (max 100!)
+#when the certain domain has more than 100 subdomains we create a second certificate for that certain domain!
 
-      curl -i -XPUT \
-         --data-binary @$DOMAINDIRECTORY/$dom.combined.pem \
-         "$PROXY_ADDRESS:8080/v1/docker-flow-proxy/cert?certName=$dom.combined.pem&distribute=true"
+COUNTER=$DOMAIN_COUNT;
 
-   done
+until [  $COUNTER -lt 1 ]; do
+  var="DOMAIN_$COUNTER";
+  cur_domains=${!var};
+
+  declare -a arr=$cur_domains;
+  #printf "as array ${arr[1]}\n";
+
+  DOMAINDIRECTORY="/etc/letsencrypt/live/${arr[0]}";
+  dom="";
+  for i in "${arr[@]}"
+  do
+    dom="$dom -d $i"
+  done
+
+  certbot certonly --standalone --non-interactive --expand --keep-until-expiring --email $CERTBOTEMAIL $dom --agree-tos $staging --standalone-supported-challenges http-01
+
+  #concat certificates, use $DOMAINDIRECTORY and registered domain name (first domain agreement)
+  printf "combine cert.pem chainpem and privkey.pem to $dom.combined.pem\n"
+  cat $DOMAINDIRECTORY/cert.pem $DOMAINDIRECTORY/chain.pem $DOMAINDIRECTORY/privkey.pem > $DOMAINDIRECTORY/${arr[0]}.combined.pem
+  printf "${GREEN}send ${arr[0]}.combined.pem to docker flow: proxy${NC}\n\n"
+
+  #send certificate to proxy, use $PROXY_ADDRESS
+  curl -i -XPUT \
+         --data-binary @$DOMAINDIRECTORY/${arr[0]}.combined.pem \
+         "$PROXY_ADDRESS:8080/v1/docker-flow-proxy/cert?certName=${arr[0]}.combined.pem&distribute=true"
+
+  let COUNTER-=1
+done
+printf "Certificates generated and send to proxy! Cron should be started now which runs this script daily. Have fun using Docker Flow: Letsencrypt!";
+/usr/bin/supervisord
