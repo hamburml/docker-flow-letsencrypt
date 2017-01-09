@@ -44,10 +44,13 @@ docker service create --name letsencrypt-companion \
     -e CERTBOTEMAIL="michael.hamburger@mail.de" \
     -e PROXY_ADDRESS="proxy" \
     --network proxy \
+    --constraint 'node.id==<nodeId>' \
+    --replicas 1 \
     --mount type=bind,source=/etc/letsencrypt,destination=/etc/letsencrypt hamburml/docker-flow-letsencrypt:latest
 ```
 
-You should always start the service on the same docker host. You must not scale it to two, this wouldn't make any sense!
+You should always start the service on the same docker host. You achieve this by setting <nodeId> to the id of the docker host on which the service should run. Use ```docker node ls```. 
+You must not scale it to two, this wouldn't make any sense! Only one instance of this companion should run.
 The certificates are only renewed when they are 60 days old or older.
 
 Important: DOMAIN_COUNT needs to be the number of Domains you want certificates generated. We need to obey lets encrypts rate limits! https://letsencrypt.org/docs/rate-limits/
