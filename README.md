@@ -60,7 +60,7 @@ The certificates are only renewed when they are 60 days old or older. This is st
 
 Important: DOMAIN_COUNT needs to be the number of Domains you want certificates generated. The first domain should always be the domain without any subdomains. That makes the folder-structure regular. 
 
-We need to obey lets encrypts rate limits! https://letsencrypt.org/docs/rate-limits/
+We need to obey Let’s Encrypt’s rate limits! https://letsencrypt.org/docs/rate-limits/
 
 ### Docker Logs
 
