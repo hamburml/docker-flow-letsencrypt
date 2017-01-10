@@ -9,28 +9,31 @@ docker-flow-letsencrypt
 ## Introduction
 
 This project is compatible with [Docker Flow: Proxy](https://github.com/vfarcic/docker-flow-proxy) and [Docker Flow: Swarm Listener](https://github.com/vfarcic/docker-flow-swarm-listener).
-It uses certbot to create and renew https certificates for your domains and stores the certificates inside /etc/letsencrypt on the running docker host (you should run the service always on the same host).
+It uses certbot to create and renew https certificates for your domains and stores the certificates inside /etc/letsencrypt on the running docker host (you should run the service always on the same host, use docker service constraints). The service setups a cron which runs two times a day and calls a script. The script runs certbot renew and uploads the certificates to [Docker Flow: Proxy](https://github.com/vfarcic/docker-flow-proxy).
 
 https://hub.docker.com/r/hamburml/docker-flow-letsencrypt/
 
 ## How does it work
 
 This docker image uses certbot, curl and cron to create and renew your letsencrypt certificates.
-Through environment variables you can set the domains certbot should create certificates, which email should be used and the proxy_address.
+Through environment variables you can set the domains certbot should create certificates, which email should be used and the adress of [Docker Flow: Proxy](https://github.com/vfarcic/docker-flow-proxy).
 
-When the image starts, the certbot.sh script runs and creates/renews the certificates. The script also combines the cert.pem, chain.pem and privkey.pem to a domainname.combined.pem file. This file is send via curl -i -XPUT to the proxy.
-The script is also symlinked in /etc/cron.daily and cron runs via supervisord.
+When the image starts, the [certbot.sh](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/certbot.sh) script runs and creates/renews the certificates. The script also runs [renewAndSendToProxy.sh](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/renewAndSendToProxy.sh) which calls certbot renew, combines the cert.pem, chain.pem and privkey.pem to a domainname.combined.pem file and uploads your cert to the proxy.
 
-If you only want to test this image you should add ```-e CERTBOTMODE="staging"``` when creating the service to use the staging mode of letsencrypt.
+[renewAndSendToProxy.sh](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/renewAndSendToProxy.sh) also calls certbot renew because this script is run two times a day via the [renewcron](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/renewcron).
+
+As you can see the output is piped into /var/log/dockeroutput.log. This file is created in the [Dockerfile](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/Dockerfile) and just redirects directly to the docker logs output.
+
+If you only want to test this image you should add ```-e CERTBOTMODE="staging"``` when creating the service to use the staging mode of letsencrypt. The certificate is not trusted so you will get a warning inside your browser.
 
 ## Usage
 
-### Build
+### [Build](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/build)
 ```
 docker build -t hamburml/docker-flow-letsencrypt .
 ```
 
-### Docker Service
+### [Run](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/run)
 
 ```
 docker service create --name letsencrypt-companion \
