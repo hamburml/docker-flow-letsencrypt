@@ -1,30 +1,38 @@
 #!/bin/bash
 
-echo "Hello! It's $(date)"
+#colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
+
+printf "${GREEN}Hello! renewAndSendToProxy runs. Today is $(date)${NC}\n"
 
 certbot renew > /var/log/dockeroutput.log
+
+PROXY_ADDRESS="$(</root/proxy_address)"
+printf "Docker Flow: Proxy DNS-Name: ${GREEN}$PROXY_ADDRESS${NC}\n";
 
 for d in /etc/letsencrypt/live/*/ ; do
     #move to directory
     cd $d
+
     #get directory name (which is the name of the regular domain)
     folder=${PWD##*/}
-    echo "current folder name is: $folder"
+    printf "current folder name is: $folder\n"
 
     #concat certificates
-    echo "concat certificates for $folder"
+    printf "concat certificates for $folder\n"
     cat cert.pem chain.pem privkey.pem > $folder.combined.pem
-    echo "generated $folder.combined.pem"
+    printf "${GREEN}generated $folder.combined.pem${NC}\n"
 
     #send to proxy
-    echo "send $folder.combined.pem to proxy"
+    printf "${GREEN}transmit $folder.combined.pem to $PROXY_ADDRESS${NC}\n"
 
     curl -i -XPUT \
          --data-binary @$folder.combined.pem \
-         "proxy:8080/v1/docker-flow-proxy/cert?certName=$folder.combined.pem&distribute=true" > /var/log/dockeroutput.log
+         "$PROXY_ADDRESS:8080/v1/docker-flow-proxy/cert?certName=$folder.combined.pem&distribute=true" > /var/log/dockeroutput.log
 
-    echo "proxy received $folder.combined.pem"
-    
+    printf "proxy received $folder.combined.pem\n"
 
 done
-echo "Bye!"
+printf "${GREEN}Thanks for using Docker Flow: Let's Encrypt and have a nice day!${NC}\n\n"
