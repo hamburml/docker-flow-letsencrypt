@@ -9,7 +9,7 @@ docker-flow-letsencrypt
 ## Introduction
 
 This project is compatible with Viktor Farcic's [Docker Flow: Proxy](https://github.com/vfarcic/docker-flow-proxy) and [Docker Flow: Swarm Listener](https://github.com/vfarcic/docker-flow-swarm-listener).
-It uses certbot to create and renew ssl certificates from Let’s Encrypt for your domains and stores them inside /etc/letsencrypt on the running docker host (you should run the service always on the same host, use docker service constraints). The service setups a cron which runs two times a day (03:00 and 15:00 UTC) and calls [renewAndSendToProxy](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/renewAndSendToProxy.sh). It runs certbot renew and uploads the certificates to [Docker Flow: Proxy](https://github.com/vfarcic/docker-flow-proxy).
+It uses certbot to create and renew ssl certificates from Let’s Encrypt for your domains and stores them inside /etc/letsencrypt on the running docker host (you should run the service always on the same host, use docker service constraints). The service setups a cron which runs two times a day (03:00 and 15:00 UTC) and calls [renewAndSendToProxy](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/renewAndSendToProxy.sh). It runs certbot renew and uploads the certificates to the running [Docker Flow: Proxy](https://github.com/vfarcic/docker-flow-proxy) service.
 
 You can find this project also on [Docker Hub](https://hub.docker.com/r/hamburml/docker-flow-letsencrypt/).
 
