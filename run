@@ -9,4 +9,6 @@ docker service create --name letsencrypt-companion \
     -e CERTBOTEMAIL="michael.hamburger@mail.de" \
     -e PROXY_ADDRESS="proxy" \
     --network proxy \
+    --constraint 'node.id==<nodeId>' \
+    --replicas 1 \
     --mount type=bind,source=/etc/letsencrypt,destination=/etc/letsencrypt hamburml/docker-flow-letsencrypt:latest
