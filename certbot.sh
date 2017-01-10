@@ -35,19 +35,11 @@ until [  $COUNTER -lt 1 ]; do
     dom="$dom -d $i"
   done
 
+  printf "create for domain with subdomains $dom\n";
+
   certbot certonly --standalone --non-interactive --expand --keep-until-expiring --email $CERTBOTEMAIL $dom --agree-tos $staging --standalone-supported-challenges http-01
-
-  #concat certificates, use $DOMAINDIRECTORY and registered domain name (first domain agreement)
-  printf "combine cert.pem chainpem and privkey.pem to $dom.combined.pem\n"
-  cat $DOMAINDIRECTORY/cert.pem $DOMAINDIRECTORY/chain.pem $DOMAINDIRECTORY/privkey.pem > $DOMAINDIRECTORY/${arr[0]}.combined.pem
-  printf "${GREEN}send ${arr[0]}.combined.pem to docker flow: proxy${NC}\n\n"
-
-  #send certificate to proxy, use $PROXY_ADDRESS
-  curl -i -XPUT \
-         --data-binary @$DOMAINDIRECTORY/${arr[0]}.combined.pem \
-         "$PROXY_ADDRESS:8080/v1/docker-flow-proxy/cert?certName=${arr[0]}.combined.pem&distribute=true"
 
   let COUNTER-=1
 done
-printf "Certificates generated and send to proxy! Cron should be started now which runs this script daily. Have fun using Docker Flow: Letsencrypt!";
-/usr/bin/supervisord
+
+/root/renewAndSendToProxy.sh
