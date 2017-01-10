@@ -3,10 +3,10 @@ docker service create --name letsencrypt-companion \
     --label com.df.distribute=true \
     --label com.df.servicePath=/.well-known/acme-challenge \
     --label com.df.port=80 \
-    -e DOMAIN_1="('haembi.de' 'www.haembi.de' 'owncloud.haembi.de' 'blog.haembi.de')"\
-    -e DOMAIN_2="('michael-hamburger.de' 'www.michael-hamburger.de' 'blog.michael-hamburger.de' 'blog2.michael-hamburger.de')"\
+    -e DOMAIN_1="('haembi.de' 'www.haembi.de' 'blog.haembi.de')"\
+    -e DOMAIN_2="('michael-hamburger.de' 'www.michael-hamburger.de' 'blog.michael-hamburger.de')"\
     -e DOMAIN_COUNT=2\
-    -e CERTBOTEMAIL="michael.hamburger@mail.de" \
+    -e CERTBOTEMAIL="example.mail@mail.de" \
     -e PROXY_ADDRESS="proxy" \
     --network proxy \
     --constraint 'node.id==<nodeId>' \
