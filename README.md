@@ -26,6 +26,8 @@ As you can see the output is piped into /var/log/dockeroutput.log. This file is 
 
 If you only want to test this image you should add ```-e CERTBOTMODE="staging"``` when creating the service to use the staging mode of Let’s Encrypt. Remember that the certificate is not trusted so you will get a warning inside your browser.
 
+Certbot is called with  ```--rsa-key-size 4096 --redirect --hsts --staple-ocsp``` for improved security.
+
 ## Usage
 
 ### [Build](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/build)
