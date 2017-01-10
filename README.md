@@ -1,4 +1,4 @@
-docker-flow-letsencrypt
+Docker Flow Let’s Encrypt
 ==================
 
 * [Introduction](#introduction)
