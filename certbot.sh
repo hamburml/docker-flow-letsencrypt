@@ -5,19 +5,18 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
-printf "${GREEN}Generate certificates for domains: ${NC}\n";
-printf "Use $CERTBOTEMAIL for certbot\n";
+printf "${GREEN}Docker Flow: Let's Encrypt started${NC}\n";
+printf "We will use $CERTBOTEMAIL for certificate registration with certbot. This e-mail is used by Let's Encrypt when you lose the account and want to get it back.\n";
 
 staging='';
 if [ "$CERTBOTMODE" ]; then
-  printf "${RED}Use staging environment of letsencrypt!${NC}";
+  printf "${RED}Staging environment of Let's Encrypt is activated! The generated certificates won't be trusted. But you will not reach Let’s Encrypt's rate limits.${NC}\n";
   staging='--staging';
 fi
 
-#we need to be careful and don't reach the rate limits of letsencrypt https://letsencrypt.org/docs/rate-limits/
-#letsencrypt has a certificates per registered domain (20 per week) and a names per certificate (100 subdomains) limit
+#we need to be careful and don't reach the rate limits of Let's Encrypt https://letsencrypt.org/docs/rate-limits/
+#Let's Encrypt has a certificates per registered domain (20 per week) and a names per certificate (100 subdomains) limit
 #so we should create ONE certificiates for a certain domain and add all their subdomains (max 100!)
-#when the certain domain has more than 100 subdomains we create a second certificate for that certain domain!
 
 COUNTER=$DOMAIN_COUNT;
 
@@ -35,11 +34,12 @@ until [  $COUNTER -lt 1 ]; do
     dom="$dom -d $i"
   done
 
-  printf "create for domain with subdomains $dom\n";
+  printf "\nUse certbot --standalone --non-interactive --expand --keep-until-expiring --agree-tos --standalone-supported-challenges http-01 --rsa-key-size 4096 --redirect --hsts --staple-ocsp  $dom";
 
-  certbot certonly --standalone --non-interactive --expand --keep-until-expiring --email $CERTBOTEMAIL $dom --agree-tos $staging --standalone-supported-challenges http-01
+  certbot certonly --standalone --non-interactive --expand --keep-until-expiring --email $CERTBOTEMAIL $dom --agree-tos $staging --standalone-supported-challenges http-01 --rsa-key-size 4096 --redirect --hsts --staple-ocsp
 
   let COUNTER-=1
 done
 
+#run renewAndSendToProxy script which calls certbot renew (yeah, certbot will be run again but this isn't a problem. In fact this script is also run via cron and therefore we must call certbot renew), concatenates the certificates and sends them to the proxy
 /root/renewAndSendToProxy.sh
