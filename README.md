@@ -16,7 +16,7 @@ https://hub.docker.com/r/hamburml/docker-flow-letsencrypt/
 ## How does it work
 
 This docker image uses certbot, curl and cron to create and renew your letsencrypt certificates.
-Through environment variables you can set the domains certbot should create certificates, which email should be used and the adress of [Docker Flow: Proxy](https://github.com/vfarcic/docker-flow-proxy).
+Through environment variables you can set the domains certbot should create certificates, which e-mail should be used for certbot and the dns-name of [Docker Flow: Proxy](https://github.com/vfarcic/docker-flow-proxy).
 
 When the image starts, the [certbot.sh](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/certbot.sh) script runs and creates/renews the certificates. The script also runs [renewAndSendToProxy.sh](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/renewAndSendToProxy.sh) which calls certbot renew, combines the cert.pem, chain.pem and privkey.pem to a domainname.combined.pem file and uploads your cert to the proxy.
 
