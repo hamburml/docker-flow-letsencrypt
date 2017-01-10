@@ -15,16 +15,16 @@ You can find this project also on [Docker Hub](https://hub.docker.com/r/hamburml
 
 ## How does it work
 
-This docker image uses certbot, curl and cron to create and renew your letsencrypt certificates.
-Through environment variables you can set the domains certbot should create certificates, which e-mail should be used for certbot and the dns-name of [Docker Flow: Proxy](https://github.com/vfarcic/docker-flow-proxy).
+This docker image uses certbot, curl and cron to create and renew your Let’s Encrypt certificates.
+Through environment variables you set the domains certbot should create certificates for, which e-mail is used by Let’s Encrypt when you lose the account and want to get it back and the dns-name of [Docker Flow: Proxy](https://github.com/vfarcic/docker-flow-proxy).
 
-When the image starts, the [certbot.sh](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/certbot.sh) script runs and creates/renews the certificates. The script also runs [renewAndSendToProxy.sh](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/renewAndSendToProxy.sh) which calls certbot renew, combines the cert.pem, chain.pem and privkey.pem to a domainname.combined.pem file and uploads your cert to the proxy.
+When the image starts, the [certbot.sh](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/certbot.sh) script runs and creates/renews the certificates. The script also runs [renewAndSendToProxy.sh](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/renewAndSendToProxy.sh) which calls certbot renew, combines the cert.pem, chain.pem and privkey.pem to a domainname.combined.pem file and uploads your cert via curl to your proxy.
 
-[renewAndSendToProxy.sh](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/renewAndSendToProxy.sh) also calls certbot renew because this script is run two times a day via the [renewcron](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/renewcron).
+[renewAndSendToProxy.sh](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/renewAndSendToProxy.sh) also calls certbot renew because this script is run two times a day (03:00 and 15:00 UTC) via [renewcron](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/renewcron).
 
-As you can see the output is piped into /var/log/dockeroutput.log. This file is created in the [Dockerfile](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/Dockerfile) and just redirects directly to the docker logs output.
+As you can see the output is piped into /var/log/dockeroutput.log. This file is created in the [Dockerfile](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/Dockerfile) and just redirects directly to the docker logs output. The logs are also colorized so that you are able to find the important information without hesitation.
 
-If you only want to test this image you should add ```-e CERTBOTMODE="staging"``` when creating the service to use the staging mode of letsencrypt. The certificate is not trusted so you will get a warning inside your browser.
+If you only want to test this image you should add ```-e CERTBOTMODE="staging"``` when creating the service to use the staging mode of Let’s Encrypt. Remember that the certificate is not trusted so you will get a warning inside your browser.
 
 ## Usage
 
@@ -44,7 +44,7 @@ docker service create --name letsencrypt-companion \
     -e DOMAIN_1="('domain1.de' 'www.domain1.de' 'subdomain1.domain1.de')"\
     -e DOMAIN_2="('domain2.de' 'www.domain2.de')"\
     -e DOMAIN_COUNT=2\
-    -e CERTBOTEMAIL="michael.hamburger@mail.de" \
+    -e CERTBOTEMAIL="your.email@mail.de" \
     -e PROXY_ADDRESS="proxy" \
     --network proxy \
     --constraint 'node.id==<nodeId>' \
@@ -52,33 +52,53 @@ docker service create --name letsencrypt-companion \
     --mount type=bind,source=/etc/letsencrypt,destination=/etc/letsencrypt hamburml/docker-flow-letsencrypt:latest
 ```
 
-You should always start the service on the same docker host. You achieve this by setting <nodeId> to the id of the docker host on which the service should run. Use ```docker node ls```. 
-You must not scale it to two, this wouldn't make any sense! Only one instance of this companion should run.
-The certificates are only renewed when they are 60 days old or older.
+You should always start the service on the same docker host. You achieve this by setting <nodeId> to the id of the docker host on which the service should run. The nodeId can be get via ```docker node ls```. 
+You must not scale the service to two, this wouldn't make any sense! Only one instance of this companion should run.
+The certificates are only renewed when they are 60 days old or older. This is standard certbot behavior.
 
-Important: DOMAIN_COUNT needs to be the number of Domains you want certificates generated. We need to obey lets encrypts rate limits! https://letsencrypt.org/docs/rate-limits/
+Important: DOMAIN_COUNT needs to be the number of Domains you want certificates generated. The first domain should always be the domain without any subdomains. That makes the folder-structure regular. 
+
+We need to obey lets encrypts rate limits! https://letsencrypt.org/docs/rate-limits/
 
 ### Docker Logs
 
 You can see the progress of the running service through the logs.
 
 ```
-root@server # docker logs letsencrypt-companion....
+root@server # docker logs letsencrypt-companion... -f
 
-Generate certificates for domains: ....
-Use michael.hamburger@mail.de for certbot
-run certbot for domain ...
-IMPORTANT NOTES:
- - Congratulations! Your certificate and chain have been saved at
-   /etc/letsencrypt/live/domain1.com/fullchain.pem. Your cert will
-   expire on 2017-04-07. To obtain a new or tweaked version of this
-   certificate in the future, simply run certbot again. To
-   non-interactively renew *all* of your certificates, run "certbot
-   renew"
-   ...
+Docker Flow: Let's Encrypt started
+We will use your.email@mail.de for certificate registration with certbot. This e-mail is used by Let's Encrypt when you lose the account and want to get it back.
+
+Use certbot --standalone --non-interactive --expand --keep-until-expiring --agree-tos --standalone-supported-challenges http-01 --rsa-key-size 4096 --redirect --hsts --staple-ocsp   -d domain1.de -d www.domain1.de -d subdomain1.domain1.de 
+-------------------------------------------------------------------------------
+Certificate not yet due for renewal; no action taken.
+-------------------------------------------------------------------------------
+(removed some entries...)
+Docker Flow: Proxy DNS-Name: proxy
+current folder name is: domain1.de
+concat certificates for domain1.de
+generated domain1.de.combined.pem
+transmit domain1.de.combined.pem to proxy
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  7114    0     0  100  7114      0   108k --:--:-- --:--:-- --:--:--  108k
+HTTP/1.1 100 Continue
+
+HTTP/1.1 200 OK
+Date: Tue, 10 Jan 2017 18:54:43 GMT
+Content-Length: 0
+Content-Type: text/plain; charset=utf-8
+
+proxy received domain1.de.combined.pem
+(removed some entries...)
+Thanks for using Docker Flow: Let's Encrypt and have a nice day!
+
+Starting supervisord (which starts and monitors cron)
+(removed some entries...)
 ```
 
-When you restart the service and the certificates can't be renewed
+When you restart the service and the certificates can't be renewed the logs will show this also.
 
 ```
 ...
