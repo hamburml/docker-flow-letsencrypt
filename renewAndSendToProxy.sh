@@ -24,6 +24,7 @@ for d in /etc/letsencrypt/live/*/ ; do
          "proxy:8080/v1/docker-flow-proxy/cert?certName=$folder.combined.pem&distribute=true" > /var/log/dockeroutput.log
 
     echo "proxy received $folder.combined.pem"
-    echo "Bye!"
+    
 
 done
+echo "Bye!"
