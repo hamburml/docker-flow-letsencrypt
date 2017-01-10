@@ -1,6 +1,6 @@
 FROM ubuntu:16.10
 # http://stackoverflow.com/questions/33548530/envsubst-command-getting-stuck-in-a-container
-RUN apt-get update && apt-get -y install cron && apt-get -y install certbot && apt-get install -y supervisor && apt-get install -y curl && apt-get install -y gettext-base 
+RUN apt-get update && apt-get -y install cron && apt-get -y install certbot && apt-get install -y supervisor && apt-get install -y curl
 
 # Add supervisord.conf
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf 
