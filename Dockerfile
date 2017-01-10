@@ -1,7 +1,6 @@
 FROM ubuntu:16.10
 # http://stackoverflow.com/questions/33548530/envsubst-command-getting-stuck-in-a-container
 RUN apt-get update && apt-get -y install cron && apt-get -y install certbot && apt-get install -y supervisor && apt-get install -y curl
-
 # Add supervisord.conf
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf 
 
@@ -19,7 +18,6 @@ ADD renewcron /etc/cron.d/renewcron
 RUN chmod u+x /etc/cron.d/renewcron 
 
 # Run the command on container startup
-CMD /root/certbot.sh > /var/log/dockeroutput.log && /usr/bin/supervisord
+CMD printenv PROXY_ADDRESS > /root/proxy_address && /root/certbot.sh > /var/log/dockeroutput.log && printf "\033[0;31mStarting supervisord (which starts and monitors cron) \033[0m\n" &&  /usr/bin/supervisord
 
 EXPOSE 80
-
