@@ -1,4 +1,12 @@
-FROM ubuntu:16.10
+#use 16.10 ubuntu instead of lts because certbot is available in 16.10 (yakkety) in 16.04 (lts) it's not certbot, it's letsencrypt (and i don't know if they are perfectly the same)
+FROM ubuntu:16.10 
+
+#set default env variables
+ENV DOMAIN_COUNT=0 \
+    CERTBOT_EMAIL="" \
+    PROXY_INSTANCE_NAME="proxy" \
+    CERTBOT_CRON_RENEW="('0 3 * * *' '0 15* * *')"
+
 # http://stackoverflow.com/questions/33548530/envsubst-command-getting-stuck-in-a-container
 RUN apt-get update && apt-get -y install cron && apt-get -y install certbot && apt-get install -y supervisor && apt-get install -y curl
 # Add supervisord.conf
@@ -17,7 +25,12 @@ RUN ln -sf /proc/1/fd/1 /var/log/dockeroutput.log
 ADD renewcron /etc/cron.d/renewcron 
 RUN chmod u+x /etc/cron.d/renewcron 
 
+# Add script which runs when the service starts
+ADD servicestart /root/servicestart
+RUN chmod u+x /root/servicestart
+
 # Run the command on container startup
-CMD printenv PROXY_ADDRESS > /root/proxy_address && /root/certbot.sh > /var/log/dockeroutput.log && printf "\033[0;31mStarting supervisord (which starts and monitors cron) \033[0m\n" &&  /usr/bin/supervisord
+CMD ["bin/bash", "/root/servicestart"]
 
 EXPOSE 80
+
