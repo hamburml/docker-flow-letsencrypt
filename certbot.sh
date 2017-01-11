@@ -6,7 +6,7 @@ GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
 printf "${GREEN}Docker Flow: Let's Encrypt started${NC}\n";
-printf "We will use $CERTBOTEMAIL for certificate registration with certbot. This e-mail is used by Let's Encrypt when you lose the account and want to get it back.\n";
+printf "We will use $CERTBOT_EMAIL for certificate registration with certbot. This e-mail is used by Let's Encrypt when you lose the account and want to get it back.\n";
 
 staging='';
 if [ "$CERTBOTMODE" ]; then
@@ -25,7 +25,6 @@ until [  $COUNTER -lt 1 ]; do
   cur_domains=${!var};
 
   declare -a arr=$cur_domains;
-  #printf "as array ${arr[1]}\n";
 
   DOMAINDIRECTORY="/etc/letsencrypt/live/${arr[0]}";
   dom="";
@@ -36,10 +35,21 @@ until [  $COUNTER -lt 1 ]; do
 
   printf "\nUse certbot --standalone --non-interactive --expand --keep-until-expiring --agree-tos --standalone-supported-challenges http-01 --rsa-key-size 4096 --redirect --hsts --staple-ocsp  $dom";
 
-  certbot certonly --standalone --non-interactive --expand --keep-until-expiring --email $CERTBOTEMAIL $dom --agree-tos $staging --standalone-supported-challenges http-01 --rsa-key-size 4096 --redirect --hsts --staple-ocsp
+  certbot certonly --standalone --non-interactive --expand --keep-until-expiring --email $CERTBOT_EMAIL $dom --agree-tos $staging --standalone-supported-challenges http-01 --rsa-key-size 4096 --redirect --hsts --staple-ocsp
 
   let COUNTER-=1
 done
+
+#prepare renewcron
+printf "SHELL=/bin/sh\nPATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin\nPROXY_INSTANCE_NAME=$PROXY_INSTANCE_NAME\n" > /etc/cron.d/renewcron 
+
+declare -a arr=$CERTBOT_CRON_RENEW;
+for i in "${arr[@]}"
+do
+  printf "$i root /root/renewAndSendToProxy.sh > /var/log/dockeroutput.log\n" >> /etc/cron.d/renewcron
+done
+
+printf "\n" >> /etc/cron.d/renewcron
 
 #run renewAndSendToProxy script which calls certbot renew (yeah, certbot will be run again but this isn't a problem. In fact this script is also run via cron and therefore we must call certbot renew), concatenates the certificates and sends them to the proxy
 /root/renewAndSendToProxy.sh
