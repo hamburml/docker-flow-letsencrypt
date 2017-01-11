@@ -1,5 +1,1 @@
-SHELL=/bin/sh
-PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-
-0 3  * * * root /root/renewAndSendToProxy.sh > /var/log/dockeroutput.log
-0 15 * * * root /root/renewAndSendToProxy.sh > /var/log/dockeroutput.log
+#placeholder - this file will be overwritten by certbot.sh
