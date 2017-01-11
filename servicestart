@@ -1,0 +1,19 @@
+#!/bin/bash
+
+if [ $DOMAIN_COUNT -lt 1 ]; then
+    printf "DOMAIN_COUNT is zero or lower!"
+    exit 1
+fi
+
+if [ -z $CERTBOT_EMAIL ]; then
+    printf "CERTBOT_EMAIL is empty!"
+    exit 1
+fi
+
+printf "Starting Docker Flow: Let's Encrypt\n"
+
+/root/certbot.sh > /var/log/dockeroutput.log 
+
+printf "\033[0;31mStarting supervisord (which starts and monitors cron) \033[0m\n"
+
+/usr/bin/supervisord
