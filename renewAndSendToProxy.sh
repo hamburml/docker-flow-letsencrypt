@@ -9,8 +9,7 @@ printf "${GREEN}Hello! renewAndSendToProxy runs. Today is $(date)${NC}\n"
 
 certbot renew > /var/log/dockeroutput.log
 
-PROXY_ADDRESS="$(</root/proxy_address)"
-printf "Docker Flow: Proxy DNS-Name: ${GREEN}$PROXY_ADDRESS${NC}\n";
+printf "Docker Flow: Proxy DNS-Name: ${GREEN}$PROXY_INSTANCE_NAME${NC}\n";
 
 for d in /etc/letsencrypt/live/*/ ; do
     #move to directory
@@ -26,11 +25,11 @@ for d in /etc/letsencrypt/live/*/ ; do
     printf "${GREEN}generated $folder.combined.pem${NC}\n"
 
     #send to proxy
-    printf "${GREEN}transmit $folder.combined.pem to $PROXY_ADDRESS${NC}\n"
+    printf "${GREEN}transmit $folder.combined.pem to $PROXY_INSTANCE_NAME${NC}\n"
 
     curl -i -XPUT \
          --data-binary @$folder.combined.pem \
-         "$PROXY_ADDRESS:8080/v1/docker-flow-proxy/cert?certName=$folder.combined.pem&distribute=true" > /var/log/dockeroutput.log
+         "$PROXY_INSTANCE_NAME:8080/v1/docker-flow-proxy/cert?certName=$folder.combined.pem&distribute=true" > /var/log/dockeroutput.log
 
     printf "proxy received $folder.combined.pem\n"
 
