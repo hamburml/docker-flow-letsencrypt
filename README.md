@@ -46,8 +46,8 @@ docker service create --name letsencrypt-companion \
     -e DOMAIN_1="('domain1.de' 'www.domain1.de' 'subdomain1.domain1.de')"\
     -e DOMAIN_2="('domain2.de' 'www.domain2.de')"\
     -e DOMAIN_COUNT=2\
-    -e CERTBOTEMAIL="your.email@mail.de" \
-    -e PROXY_ADDRESS="proxy" \
+    -e CERTBOT_EMAIL="your.email@mail.de" \
+    -e PROXY_INSTANCE_NAME="proxy" \
     --network proxy \
     --constraint 'node.id==<nodeId>' \
     --replicas 1 \
