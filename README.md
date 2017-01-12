@@ -37,6 +37,7 @@ docker build -t hamburml/docker-flow-letsencrypt .
 
 ### [Run](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/run)
 
+Attention! Create /etc/letsencrypt folder before you start the service.
 ```
 docker service create --name letsencrypt-companion \
     --label com.df.notify=true \
