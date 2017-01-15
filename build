@@ -1,2 +1,2 @@
 docker build --rm -t hamburml/docker-flow-letsencrypt .
-docker push hamburml/docker-flow-letsencrypt
+docker push hamburml/docker-flow-letsencrypt:latest
