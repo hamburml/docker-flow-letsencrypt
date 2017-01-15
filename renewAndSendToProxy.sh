@@ -7,7 +7,7 @@ NC='\033[0m' # No Color
 
 printf "${GREEN}Hello! renewAndSendToProxy runs. Today is $(date)${NC}\n"
 
-certbot renew > /var/log/dockeroutput.log
+certbot-auto renew > /var/log/dockeroutput.log
 
 printf "Docker Flow: Proxy DNS-Name: ${GREEN}$PROXY_INSTANCE_NAME${NC}\n";
 
