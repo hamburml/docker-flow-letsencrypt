@@ -58,9 +58,9 @@ docker service create --name letsencrypt-companion \
 
 You should always start the service on the same docker host. You achieve this by setting <nodeId> to the id of the docker host on which the service should run. The nodeId can be get via ```docker node ls```. 
 You must not scale the service to two, this wouldn't make any sense! Only one instance of this companion should run.
-The certificates are only renewed when they are 60 days old or older. This is standard certbot behavior. If you want to change the number of times the certbot renew and publish script runs you need to change CERTBOT_CRON_RENEW. The syntax is described [here](http://www.adminschoice.com/crontab-quick-reference). 
+The certificates are only renewed when they are 60 days old or older. This is standard certbot behavior. But the certificates will be renewed when you add subdomains to the domain-list! If you want to change the number of times the certbot renew and publish script runs you need to change CERTBOT_CRON_RENEW. The syntax is described [here](http://www.adminschoice.com/crontab-quick-reference). 
 
-Important: DOMAIN_COUNT needs to be the number of Domains you want certificates generated. The first domain should always be the domain without any subdomains. That makes the folder-structure regular. 
+Important: DOMAIN_COUNT needs to be the number of Domains you want certificates generated. The first domain must always be the domain without any subdomains. That makes the folder-structure regular.
 
 We need to obey Let’s Encrypt’s rate limits! https://letsencrypt.org/docs/rate-limits/
 
