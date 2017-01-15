@@ -9,5 +9,6 @@ docker service create --name letsencrypt-companion \
     -e CERTBOT_EMAIL="michael.hamburger@mail.de" \
     -e PROXY_ADDRESS="proxy" \
     -e CERTBOT_CRON_RENEW="('0 3 * * *' '0 15 * * *')"\
+    -e CERTBOTMODE="staging" \
     --network proxy \
     --mount type=bind,source=/etc/letsencrypt,destination=/etc/letsencrypt hamburml/docker-flow-letsencrypt:latest
