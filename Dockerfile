@@ -1,14 +1,22 @@
-#use 16.10 ubuntu instead of lts because certbot is available in 16.10 (yakkety) in 16.04 (lts) it's not certbot, it's letsencrypt (and i don't know if they are perfectly the same)
-FROM ubuntu:16.10 
+#use 16.04 lts, install certbot-auto to get newest certbot version
+FROM ubuntu:16.04
 
 #set default env variables
 ENV DOMAIN_COUNT=0 \
     CERTBOT_EMAIL="" \
     PROXY_INSTANCE_NAME="proxy" \
-    CERTBOT_CRON_RENEW="('0 3 * * *' '0 15* * *')"
+    CERTBOT_CRON_RENEW="('0 3 * * *' '0 15* * *')" \
+    PATH="$PATH:/root"
 
 # http://stackoverflow.com/questions/33548530/envsubst-command-getting-stuck-in-a-container
-RUN apt-get update && apt-get -y install cron && apt-get -y install certbot && apt-get install -y supervisor && apt-get install -y curl
+RUN apt-get update && apt-get -y install cron && apt-get install -y supervisor && apt-get install -y wget && apt-get install -y curl
+
+# install certbot-auto
+RUN cd /root && wget https://dl.eff.org/certbot-auto
+RUN chmod a+x /root/certbot-auto
+RUN ./root/certbot-auto --version --non-interactive
+RUN PATH=$PATH:/root
+
 # Add supervisord.conf
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf 
 
@@ -25,7 +33,6 @@ RUN ln -sf /proc/1/fd/1 /var/log/dockeroutput.log
 ADD renewcron /etc/cron.d/renewcron 
 RUN chmod u+x /etc/cron.d/renewcron 
 
-# Add script which runs when the service starts
 ADD servicestart /root/servicestart
 RUN chmod u+x /root/servicestart
 
@@ -33,4 +40,3 @@ RUN chmod u+x /root/servicestart
 CMD ["bin/bash", "/root/servicestart"]
 
 EXPOSE 80
-
