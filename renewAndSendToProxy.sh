@@ -39,6 +39,6 @@ printf "${RED}/etc/letsencrypt will be backed up as backup-date-time.tar.gz. It'
 cd /etc/letsencrypt
 mkdir -p backup
 tar -cvpz --exclude='./backup' -f ./backup/backup-`date +%Y%m%d_%H%M%S`.tar.gz .
-printf "${RED}Backup created!${NC}\n\n"
+printf "${RED}Backup created, if you like download the /etc/letsencrypt/backup folder and store it on a safe place!${NC}\n\n"
 
 printf "${GREEN}Thanks for using Docker Flow: Let's Encrypt and have a nice day!${NC}\n\n"
