@@ -20,7 +20,7 @@ Through environment variables you set the domains certbot-auto should create cer
 
 When the image starts, the [certbot.sh](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/certbot.sh) script runs and creates/renews the certificates and creates /etc/cron.d/renewcron. The script also runs [renewAndSendToProxy.sh](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/renewAndSendToProxy.sh) which combines the cert.pem, chain.pem and privkey.pem to a domainname.combined.pem file and uploads your cert via curl to your proxy.
 
-[renewAndSendToProxy.sh](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/renewAndSendToProxy.sh) also calls certbot-auto renew because this script is run by default two times a day (03:00 and 15:00 UTC) via /etc/cron.d/renewcron. You can overwrite this behavior by changing CERTBOT_CRON_RENEW environment variable.
+[renewAndSendToProxy.sh](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/renewAndSendToProxy.sh) also calls certbot-auto renew because this script is run by default two times a day (03:00 and 15:00 UTC) via /etc/cron.d/renewcron. You can overwrite this behavior by changing CERTBOT_CRON_RENEW environment variable. This script also creates backups of the /etc/letsencrypt folder which are stored in /etc/letsencrypt/backup. Don't worry, the backup folder is excluded from the tar command.
 
 As you can see the output is piped into /var/log/dockeroutput.log. This file is created in the [Dockerfile](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/Dockerfile) and just redirects directly to the docker logs output. The logs are also colorized so that you are able to find the important information without hesitation.
 
