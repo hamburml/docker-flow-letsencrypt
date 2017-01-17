@@ -36,7 +36,7 @@ for d in /etc/letsencrypt/live/*/ ; do
 done
 
 printf "${RED}/etc/letsencrypt will be backed up as backup-date-time.tar.gz. It's important to know that some files are symbolic links (inside this backup) and they need to be untared correctly.${NC}\n"
-cd /lets/letsencrypt
+cd /etc/letsencrypt
 tar -cvpzf backup-`date +%Y%m%d_%H%M%S`.tar.gz .
 printf "${RED}Backup created!${NC}\n\n"
 
