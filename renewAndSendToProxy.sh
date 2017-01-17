@@ -38,7 +38,7 @@ done
 printf "${RED}/etc/letsencrypt will be backed up as backup-date-time.tar.gz. It's important to know that some files are symbolic links (inside this backup) and they need to be untared correctly.${NC}\n"
 cd /etc/letsencrypt
 mkdir -p backup
-tar -cpz --exclude='./backup' -f ./backup/backup-`date +%Y%m%d_%H%M%S`.tar.gz .
+tar -cpz --exclude='./backup' -f ./backup/backup-`date +%Y%m%d_%H%M%S_%Z`.tar.gz .
 printf "${RED}Backup created, if you like download the /etc/letsencrypt/backup folder and store it on a safe place!${NC}\n\n"
 
 printf "${GREEN}Thanks for using Docker Flow: Let's Encrypt and have a nice day!${NC}\n\n"
