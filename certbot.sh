@@ -41,7 +41,12 @@ until [  $COUNTER -lt 1 ]; do
 done
 
 #prepare renewcron
-printf "SHELL=/bin/sh\nPATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin\nPROXY_INSTANCE_NAME=$PROXY_INSTANCE_NAME\nCERTBOTMODE=$CERTBOTMODE\n" > /etc/cron.d/renewcron 
+if [ "$CERTBOTMODE" ]; then
+  printf "SHELL=/bin/sh\nPATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin\nPROXY_INSTANCE_NAME=$PROXY_INSTANCE_NAME\nCERTBOTMODE=$CERTBOTMODE\n" > /etc/cron.d/renewcron 
+else
+  printf "SHELL=/bin/sh\nPATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin\nPROXY_INSTANCE_NAME=$PROXY_INSTANCE_NAME\n" > /etc/cron.d/renewcron 
+fi
+
 
 declare -a arr=$CERTBOT_CRON_RENEW;
 for i in "${arr[@]}"
