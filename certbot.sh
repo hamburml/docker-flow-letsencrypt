@@ -33,9 +33,9 @@ until [  $COUNTER -lt 1 ]; do
     dom="$dom -d $i"
   done
 
-  printf "\nUse certbot --standalone --non-interactive --cert-name ${arr[0]} --expand --keep-until-expiring --agree-tos --preferred-challenges http-01 --rsa-key-size 4096 --redirect --hsts --staple-ocsp  $dom";
+  printf "\nUse certbot-auto certonly --no-self-upgrade --standalone --non-interactive --cert-name ${arr[0]} --expand --keep-until-expiring --agree-tos --preferred-challenges http-01 --rsa-key-size 4096 --redirect --hsts --staple-ocsp  $dom";
 
-  certbot-auto certonly --standalone --non-interactive --cert-name ${arr[0]} --expand --keep-until-expiring --email $CERTBOT_EMAIL $dom --agree-tos $staging --preferred-challenges http-01 --rsa-key-size 4096 --redirect --hsts --staple-ocsp
+  certbot-auto certonly --no-self-upgrade --standalone --non-interactive --cert-name ${arr[0]} --expand --keep-until-expiring --email $CERTBOT_EMAIL $dom --agree-tos $staging --preferred-challenges http-01 --rsa-key-size 4096 --redirect --hsts --staple-ocsp
 
   let COUNTER-=1
 done
