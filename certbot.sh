@@ -48,9 +48,9 @@ done
 
 #prepare renewcron
 if [ "$CERTBOTMODE" ]; then
-  printf "SHELL=/bin/sh\nPATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin\nPROXY_INSTANCE_NAME=$PROXY_INSTANCE_NAME\nCERTBOTMODE=$CERTBOTMODE\n" > /etc/cron.d/renewcron 
+  printf "SHELL=/bin/sh\nPATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin\nPROXY_ADDRESS=$PROXY_ADDRESS\nCERTBOTMODE=$CERTBOTMODE\n" > /etc/cron.d/renewcron 
 else
-  printf "SHELL=/bin/sh\nPATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin\nPROXY_INSTANCE_NAME=$PROXY_INSTANCE_NAME\n" > /etc/cron.d/renewcron 
+  printf "SHELL=/bin/sh\nPATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin\nPROXY_ADDRESS=$PROXY_ADDRESS\n" > /etc/cron.d/renewcron 
 fi
 
 
