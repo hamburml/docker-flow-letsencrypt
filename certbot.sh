@@ -34,7 +34,7 @@ until [  $COUNTER -lt 1 ]; do
   done
 
   # check if DOMAINDIRECTORY exists, if it exists use --cert-name to prevent 0001 0002 0003 folders
-  if [ -d "$DIRECTORY" ]; then
+  if [ -d "$DOMAINDIRECTORY" ]; then
     printf "\nUse certbot-auto certonly --cert-name ${arr[0]} --no-self-upgrade --standalone --non-interactive --expand --keep-until-expiring --email $CERTBOT_EMAIL $dom --agree-tos $staging --preferred-challenges http-01 --rsa-key-size 4096 --redirect --hsts --staple-ocsp $dom \n";
     certbot-auto certonly --no-self-upgrade --cert-name ${arr[0]} --standalone --non-interactive --expand --keep-until-expiring --email $CERTBOT_EMAIL $dom --agree-tos $staging --preferred-challenges http-01 --rsa-key-size 4096 --redirect --hsts --staple-ocsp
   else
