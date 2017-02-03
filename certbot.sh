@@ -33,10 +33,16 @@ until [  $COUNTER -lt 1 ]; do
     dom="$dom -d $i"
   done
 
-  printf "\nUse certbot --standalone --non-interactive --cert-name ${arr[0]} --expand --keep-until-expiring --agree-tos --preferred-challenges http-01 --rsa-key-size 4096 --redirect --hsts --staple-ocsp  $dom";
+  # check if DOMAINDIRECTORY exists, if it exists use --cert-name to prevent 0001 0002 0003 folders
+  if [ -d "$DOMAINDIRECTORY" ]; then
+    printf "\nUse certbot-auto certonly --cert-name ${arr[0]} --no-self-upgrade --standalone --non-interactive --expand --keep-until-expiring --email $CERTBOT_EMAIL $dom --agree-tos $staging --preferred-challenges http-01 --rsa-key-size 4096 --redirect --hsts --staple-ocsp $dom \n";
+    certbot-auto certonly --no-self-upgrade --cert-name ${arr[0]} --standalone --non-interactive --expand --keep-until-expiring --email $CERTBOT_EMAIL $dom --agree-tos $staging --preferred-challenges http-01 --rsa-key-size 4096 --redirect --hsts --staple-ocsp
+  else
+    printf "\nUse certbot-auto certonly --no-self-upgrade --standalone --non-interactive --expand --keep-until-expiring --email $CERTBOT_EMAIL $dom --agree-tos $staging --preferred-challenges http-01 --rsa-key-size 4096 --redirect --hsts --staple-ocsp $dom \n";
+    certbot-auto certonly --no-self-upgrade --standalone --non-interactive --expand --keep-until-expiring --email $CERTBOT_EMAIL $dom --agree-tos $staging --preferred-challenges http-01 --rsa-key-size 4096 --redirect --hsts --staple-ocsp
+  fi
 
-  certbot-auto certonly --standalone --non-interactive --cert-name ${arr[0]} --expand --keep-until-expiring --email $CERTBOT_EMAIL $dom --agree-tos $staging --preferred-challenges http-01 --rsa-key-size 4096 --redirect --hsts --staple-ocsp
-
+  
   let COUNTER-=1
 done
 
