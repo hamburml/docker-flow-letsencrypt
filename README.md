@@ -38,6 +38,9 @@ docker build -t hamburml/docker-flow-letsencrypt .
 ### [Run](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/run)
 
 Attention! Create /etc/letsencrypt folder before you start the service.
+
+Assuming you are planning to run this service on the manager which might be `node-1`.
+
 ```
 docker service create --name letsencrypt-companion \
     --label com.df.notify=true \
@@ -52,7 +55,7 @@ docker service create --name letsencrypt-companion \
     -e CERTBOT_CRON_RENEW="('0 3 * * *' '0 15 * * *')"\
     --network proxy \
     --mount type=bind,source=/etc/letsencrypt,destination=/etc/letsencrypt \
-    --constraint 'node.id==<nodeId>' \
+    --constraint=node.role==manager \
     --replicas 1 hamburml/docker-flow-letsencrypt:latest
 ```
 
