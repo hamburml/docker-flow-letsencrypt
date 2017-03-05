@@ -9,7 +9,10 @@ Docker Flow: Let's Encrypt
 ## Introduction
 
 This project is compatible with Viktor Farcic's [Docker Flow: Proxy](https://github.com/vfarcic/docker-flow-proxy) and [Docker Flow: Swarm Listener](https://github.com/vfarcic/docker-flow-swarm-listener).
-It uses certbot-auto to create and renew ssl certificates from Let’s Encrypt for your domains and stores them inside /etc/letsencrypt on the running docker host (you should run the service always on the same host, use docker service constraints). The service setups a cron which runs by default two times a day (03:00 and 15:00 UTC) and calls [renewAndSendToProxy](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/renewAndSendToProxy.sh). You can overwrite these cron behavior with the correct environment variables. It runs certbot-auto renew and uploads the certificates to the running [Docker Flow: Proxy](https://github.com/vfarcic/docker-flow-proxy) service.
+It uses certbot-auto to create and renew ssl certificates from Let’s Encrypt for your domains and stores them inside /etc/letsencrypt thus it requires a persistant storage.
+You can bind a folder from the host and use a constraint to make sure the companion service always runs on the same host or use storage plugins such as [rexray](https://github.com/codedellemc/rexray) to allow data to follow your container on other nodes.
+
+The service setups a cron which runs by default two times a day (03:00 and 15:00 UTC) and calls [renewAndSendToProxy](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/renewAndSendToProxy.sh). You can overwrite these cron behavior with the correct environment variables. It runs certbot-auto renew and uploads the certificates to the running [Docker Flow: Proxy](https://github.com/vfarcic/docker-flow-proxy) service.
 
 You can find this project also on [Docker Hub](https://hub.docker.com/r/hamburml/docker-flow-letsencrypt/).
 
@@ -37,9 +40,11 @@ docker build -t hamburml/docker-flow-letsencrypt .
 
 ### [Run](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/run)
 
-Attention! Create /etc/letsencrypt folder before you start the service.
+Attention! If you use local storage, create the `/etc/letsencrypt` folder before you start the service.
+
 ```
 docker service create --name letsencrypt-companion \
+    --label com.df.aclName=__acme_letsencrypt_companion \
     --label com.df.notify=true \
     --label com.df.distribute=true \
     --label com.df.servicePath=/.well-known/acme-challenge \
@@ -55,6 +60,47 @@ docker service create --name letsencrypt-companion \
     --constraint 'node.id==<nodeId>' \
     --replicas 1 hamburml/docker-flow-letsencrypt:latest
 ```
+
+The `aclName` label is optional. However it helps the proxy to order the ACls and make sure that the companion rule is above other service rules since the rules are added sequentially so ACME verification works.
+
+You may also use a stack file to deploy the letsencrypt companion. The content of the [docker-compose-stack.yml](docker-compose-stack.yml) file is:
+
+```
+version: "3"
+
+services:
+
+  # Let's Encrypt Companion
+  letsencrypt-companion:
+    image: hamburml/docker-flow-letsencrypt:latest
+    networks:
+      - proxy
+    environment:
+      - DOMAIN_1=('haembi.de' 'www.haembi.de' 'blog.haembi.de')
+      - DOMAIN_2=('michael-hamburger.de' 'www.michael-hamburger.de' 'blog.michael-hamburger.de')
+      - DOMAIN_COUNT=2
+      - CERTBOT_EMAIL=your.mail@mail.de
+      - PROXY_ADDRESS=proxy
+      - CERTBOT_CRON_RENEW=('0 3 * * *' '0 15 * * *')
+    volumes:
+          - /etc/letsencrypt:/etc/letsencrypt
+    deploy:
+      labels:
+        - com.df.aclName=__acme_letsencrypt_companion # arbitrary aclName to make sure it's on top on HAProxy's list
+        - com.df.servicePath=/.well-known/acme-challenge
+        - com.df.notify=true
+        - com.df.distribute=true
+        - com.df.port=80
+      placement:
+        constraints: [node.id == <nodeId>]
+      replicas: 1
+
+networks:
+  proxy:
+    external: true
+```
+
+As a full stack example with Viktor's proxy and listener, check the [docker-compose-full-stack.yml](docker-compose-full-stack.yml) file.
 
 You should always start the service on the same docker host. You achieve this by setting <nodeId> to the id of the docker host on which the service should run. The nodeId can be get via ```docker node ls```. 
 You must not scale the service to two, this wouldn't make any sense! Only one instance of this companion should run.

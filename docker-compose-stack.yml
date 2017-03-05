@@ -1,0 +1,32 @@
+version: "3"
+
+services:
+
+  # Let's Encrypt Companion
+  letsencrypt-companion:
+    image: hamburml/docker-flow-letsencrypt:latest
+    networks:
+      - proxy
+    environment:
+      - DOMAIN_1=('haembi.de' 'www.haembi.de' 'blog.haembi.de')
+      - DOMAIN_2=('michael-hamburger.de' 'www.michael-hamburger.de' 'blog.michael-hamburger.de')
+      - DOMAIN_COUNT=2
+      - CERTBOT_EMAIL=your.mail@mail.de
+      - PROXY_ADDRESS=proxy
+      - CERTBOT_CRON_RENEW=('0 3 * * *' '0 15 * * *')
+    volumes:
+          - /etc/letsencrypt:/etc/letsencrypt
+    deploy:
+      labels:
+        - com.df.aclName=__acme_letsencrypt_companion # arbitrary aclName to make sure it's on top on HAProxy's list
+        - com.df.servicePath=/.well-known/acme-challenge
+        - com.df.notify=true
+        - com.df.distribute=true
+        - com.df.port=80
+      placement:
+        constraints: [node.id == <nodeId>]
+      replicas: 1
+
+networks:
+  proxy:
+    external: true
