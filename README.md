@@ -44,7 +44,6 @@ Attention! If you use local storage, create the `/etc/letsencrypt` folder before
 
 ```
 docker service create --name letsencrypt-companion \
-    --label com.df.aclName=__acme_letsencrypt_companion \
     --label com.df.notify=true \
     --label com.df.distribute=true \
     --label com.df.servicePath=/.well-known/acme-challenge \
@@ -86,7 +85,6 @@ services:
           - /etc/letsencrypt:/etc/letsencrypt
     deploy:
       labels:
-        - com.df.aclName=__acme_letsencrypt_companion # arbitrary aclName to make sure it's on top on HAProxy's list
         - com.df.servicePath=/.well-known/acme-challenge
         - com.df.notify=true
         - com.df.distribute=true
