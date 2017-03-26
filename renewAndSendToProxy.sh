@@ -40,7 +40,7 @@ for d in /etc/letsencrypt/live/*/ ; do
     exitcode=0
     until [ $TRIES -ge $MAXRETRIES ]
     do
-      n=$[$TRIES+1]
+      TRIES=$[$TRIES+1]
       curl -i -XPUT \
            --data-binary @$folder.combined.pem \
            "$PROXY_ADDRESS:8080/v1/docker-flow-proxy/cert?certName=$folder.combined.pem&distribute=true" > /var/log/dockeroutput.log && break
