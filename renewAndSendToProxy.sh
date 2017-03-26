@@ -51,7 +51,7 @@ for d in /etc/letsencrypt/live/*/ ; do
       else
         printf "${RED}transmit failed, we try again in ${TIMEOUT} seconds.${NC}\n"
       fi
-      sleep TIMEOUT
+      sleep $TIMEOUT
     done
 
     if [ $exitcode -eq 0 ]; then
