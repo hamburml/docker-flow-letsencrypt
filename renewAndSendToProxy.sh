@@ -40,18 +40,18 @@ for d in /etc/letsencrypt/live/*/ ; do
     exitcode=0
     until [ $TRIES -ge $MAXRETRIES ]
     do
+      TRIES=$[$TRIES+1]
       curl --silent --show-error -i -XPUT \
            --data-binary @$folder.combined.pem \
            "$PROXY_ADDRESS:8080/v1/docker-flow-proxy/cert?certName=$folder.combined.pem&distribute=true" > /var/log/dockeroutput.log && break
       exitcode=$?
 
-      if [ $TRIES -eq 4 ]; then
+      if [ $TRIES -eq $MAXRETRIES ]; then
         printf "${RED}transmit failed after ${TRIES} attempts.${NC}\n"
       else
         printf "${RED}transmit failed, we try again in ${TIMEOUT} seconds.${NC}\n"
       fi
       sleep $TIMEOUT
-      TRIES=$[$TRIES+1]
     done
 
     if [ $exitcode -eq 0 ]; then
