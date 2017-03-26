@@ -5,6 +5,15 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
+#times we tried curl
+TRIES=0
+
+#maximum number of retries
+MAXRETRIES=5
+
+#timeout
+TIMEOUT=5
+
 printf "${GREEN}Hello! renewAndSendToProxy runs. Today is $(date)${NC}\n"
 
 #full path is needed or it is not started when run as cron
@@ -25,14 +34,29 @@ for d in /etc/letsencrypt/live/*/ ; do
     cat cert.pem chain.pem privkey.pem > $folder.combined.pem
     printf "${GREEN}generated $folder.combined.pem${NC}\n"
 
-    #send to proxy
+    #send to proxy, retry up to 5 times with a timeout of $TIMEOUT seconds
     printf "${GREEN}transmit $folder.combined.pem to $PROXY_ADDRESS${NC}\n"
 
-    curl -i -XPUT \
-         --data-binary @$folder.combined.pem \
-         "$PROXY_ADDRESS:8080/v1/docker-flow-proxy/cert?certName=$folder.combined.pem&distribute=true" > /var/log/dockeroutput.log
+    exitcode=0
+    until [ $TRIES -ge $MAXRETRIES ]
+    do
+      n=$[$TRIES+1]
+      curl -i -XPUT \
+           --data-binary @$folder.combined.pem \
+           "$PROXY_ADDRESS:8080/v1/docker-flow-proxy/cert?certName=$folder.combined.pem&distribute=true" > /var/log/dockeroutput.log && break
+      exitcode=$?
 
-    printf "proxy received $folder.combined.pem\n"
+      if [ $TRIES -eq 4 ]; then
+        printf "${RED}transmit failed after ${TRIES} attempts.${NC}\n"
+      else
+        printf "${RED}transmit failed, we try again in ${TIMEOUT} seconds.${NC}\n"
+      fi
+      sleep TIMEOUT
+    done
+
+    if [ $exitcode -eq 0 ]; then
+      printf "proxy received $folder.combined.pem\n"
+    fi
 
 done
 
