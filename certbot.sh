@@ -14,14 +14,16 @@ TIMEOUT=5
 printf "${GREEN}Docker Flow: Let's Encrypt started${NC}\n";
 printf "We will use $CERTBOT_EMAIL for certificate registration with certbot. This e-mail is used by Let's Encrypt when you lose the account and want to get it back.\n";
 
-staging='';
+#common arguments
+args=("--no-self-upgrade" "--standalone" "--non-interactive" "--expand" "--keep-until-expiring" "--email" "$CERTBOT_EMAIL" "--agree-tos" "--preferred-challenges" "http-01" "--rsa-key-size" "4096" "--redirect" "--hsts" "--staple-ocsp")
+
+#if we are in a staging enviroment append the staging argument, the staging argument
+#was previously set to an empty string if the staging enviroment was not used
+#but this confuses cert-auto and should hence not be used
 if [ "$CERTBOTMODE" ]; then
   printf "${RED}Staging environment of Let's Encrypt is activated! The generated certificates won't be trusted. But you will not reach Let’s Encrypt's rate limits.${NC}\n";
-  staging='--staging';
+  args+=("--staging");
 fi
-
-#common arguments
-args=("--no-self-upgrade" "--standalone" "--non-interactive" "--expand" "--keep-until-expiring" "--email" "$CERTBOT_EMAIL" "--agree-tos" "$staging" "--preferred-challenges" "http-01" "--rsa-key-size" "4096" "--redirect" "--hsts" "--staple-ocsp")
 
 #we need to be careful and don't reach the rate limits of Let's Encrypt https://letsencrypt.org/docs/rate-limits/
 #Let's Encrypt has a certificates per registered domain (20 per week) and a names per certificate (100 subdomains) limit
