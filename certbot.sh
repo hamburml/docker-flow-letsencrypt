@@ -32,10 +32,7 @@ args=("--no-self-upgrade" "--standalone" "--non-interactive" "--expand" "--keep-
 #Let's Encrypt has a certificates per registered domain (20 per week) and a names per certificate (100 subdomains) limit
 #so we should create ONE certificiates for a certain domain and add all their subdomains (max 100!)
 
-COUNTER=$DOMAIN_COUNT;
-
-until [  $COUNTER -lt 1 ]; do
-  var="DOMAIN_$COUNTER";
+for var in $(env | grep 'DOMAIN_' | sed  -e 's/=.*//'); do
   cur_domains=${!var};
 
   declare -a arr=$cur_domains;
@@ -77,8 +74,6 @@ until [  $COUNTER -lt 1 ]; do
     fi
   fi
 
-  
-  let COUNTER-=1
 done
 
 #prepare renewcron

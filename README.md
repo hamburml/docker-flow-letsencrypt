@@ -50,7 +50,6 @@ docker service create --name letsencrypt-companion \
     --label com.df.port=80 \
     -e DOMAIN_1="('haembi.de' 'www.haembi.de' 'blog.haembi.de')"\
     -e DOMAIN_2="('michael-hamburger.de' 'www.michael-hamburger.de' 'blog.michael-hamburger.de')"\
-    -e DOMAIN_COUNT=2 \
     -e CERTBOT_EMAIL="your.mail@mail.de" \
     -e PROXY_ADDRESS="proxy" \
     -e CERTBOT_CRON_RENEW="('0 3 * * *' '0 15 * * *')"\
@@ -77,7 +76,6 @@ services:
     environment:
       - DOMAIN_1=('haembi.de' 'www.haembi.de' 'blog.haembi.de')
       - DOMAIN_2=('michael-hamburger.de' 'www.michael-hamburger.de' 'blog.michael-hamburger.de')
-      - DOMAIN_COUNT=2
       - CERTBOT_EMAIL=your.mail@mail.de
       - PROXY_ADDRESS=proxy
       - CERTBOT_CRON_RENEW=('0 3 * * *' '0 15 * * *')
@@ -104,7 +102,7 @@ You should always start the service on the same docker host. You achieve this by
 You must not scale the service to two, this wouldn't make any sense! Only one instance of this companion should run.
 The certificates are only renewed when they are 60 days old or older. This is standard certbot-auto behavior. But the certificates will be renewed when you add subdomains to the domain-list! If you want to change the number of times certbot-auto renew and the publish script is called you need to change CERTBOT_CRON_RENEW. The syntax is described [here](http://www.adminschoice.com/crontab-quick-reference). 
 
-Important: DOMAIN_COUNT needs to be the number of Domains you want certificates generated. The first domain must always be the domain without any subdomains. That makes the folder-structure regular.
+Important: The first domain must always be the domain without any subdomains. That makes the folder-structure regular.
 
 We need to obey Let’s Encrypt’s rate limits! https://letsencrypt.org/docs/rate-limits/
 
