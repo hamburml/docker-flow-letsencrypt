@@ -2,8 +2,7 @@
 FROM ubuntu:16.04
 
 #set default env variables
-ENV DOMAIN_COUNT=0 \
-    CERTBOT_EMAIL="" \
+ENV CERTBOT_EMAIL="" \
     PROXY_ADDRESS="proxy" \
     CERTBOT_CRON_RENEW="('0 3 * * *' '0 15* * *')" \
     PATH="$PATH:/root"

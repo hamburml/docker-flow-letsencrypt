@@ -5,7 +5,6 @@ docker service create --name letsencrypt-companion \
     --label com.df.port=80 \
     -e DOMAIN_1="('haembi.de' 'www.haembi.de' 'blog.haembi.de')"\
     -e DOMAIN_2="('michael-hamburger.de' 'www.michael-hamburger.de' 'blog.michael-hamburger.de')"\
-    -e DOMAIN_COUNT=2 \
     -e CERTBOT_EMAIL="michael.hamburger@mail.de" \
     -e PROXY_ADDRESS="proxy" \
     -e CERTBOT_CRON_RENEW="('0 3 * * *' '0 15 * * *')"\
