@@ -2,19 +2,23 @@
 FROM ubuntu:16.04
 
 #set default env variables
-ENV CERTBOT_EMAIL="" \
+ENV DEBIAN_FRONTEND=noninteractive \
+    CERTBOT_EMAIL="" \
     PROXY_ADDRESS="proxy" \
     CERTBOT_CRON_RENEW="('0 3 * * *' '0 15* * *')" \
     PATH="$PATH:/root"
 
 # http://stackoverflow.com/questions/33548530/envsubst-command-getting-stuck-in-a-container
-RUN apt-get update && apt-get -y install cron && apt-get install -y supervisor && apt-get install -y wget && apt-get install -y curl
+RUN apt-get update && \
+    apt-get -y install cron supervisor curl && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # install certbot-auto
-RUN cd /root && wget https://dl.eff.org/certbot-auto
-RUN chmod a+x /root/certbot-auto
-RUN ./root/certbot-auto --version --non-interactive
-RUN PATH=$PATH:/root
+RUN curl -o /root/certbot-auto https://dl.eff.org/certbot-auto && \
+    chmod a+x /root/certbot-auto && \
+    /root/certbot-auto --version --non-interactive && \
+    apt-get purge -y --auto-remove gcc libc6-dev && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Add supervisord.conf
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf 
@@ -29,13 +33,13 @@ RUN chmod u+x /root/renewAndSendToProxy.sh
 RUN ln -sf /proc/1/fd/1 /var/log/dockeroutput.log
 
 # Add symbolic link in cron.daily directory without ending (important!)
-ADD renewcron /etc/cron.d/renewcron 
-RUN chmod u+x /etc/cron.d/renewcron 
+ADD renewcron /etc/cron.d/renewcron
+RUN chmod u+x /etc/cron.d/renewcron
 
 ADD servicestart /root/servicestart
 RUN chmod u+x /root/servicestart
 
 # Run the command on container startup
-CMD ["bin/bash", "/root/servicestart"]
+CMD ["/root/servicestart"]
 
 EXPOSE 80

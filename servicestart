@@ -11,4 +11,4 @@ printf "Starting Docker Flow: Let's Encrypt\n"
 
 printf "\033[0;31mStarting supervisord (which starts and monitors cron) \033[0m\n"
 
-/usr/bin/supervisord -c etc/supervisor/conf.d/supervisord.conf
+/usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
