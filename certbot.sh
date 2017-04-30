@@ -25,9 +25,6 @@ if [ "$CERTBOTMODE" ]; then
   args+=("--staging");
 fi
 
-#common arguments
-args=("--no-self-upgrade" "--standalone" "--non-interactive" "--expand" "--keep-until-expiring" "--email" "$CERTBOT_EMAIL" "--agree-tos" "$staging" "--preferred-challenges" "http-01" "--rsa-key-size" "4096" "--redirect" "--hsts" "--staple-ocsp")
-
 #we need to be careful and don't reach the rate limits of Let's Encrypt https://letsencrypt.org/docs/rate-limits/
 #Let's Encrypt has a certificates per registered domain (20 per week) and a names per certificate (100 subdomains) limit
 #so we should create ONE certificiates for a certain domain and add all their subdomains (max 100!)
