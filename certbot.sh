@@ -29,7 +29,7 @@ fi
 #Let's Encrypt has a certificates per registered domain (20 per week) and a names per certificate (100 subdomains) limit
 #so we should create ONE certificiates for a certain domain and add all their subdomains (max 100!)
 
-for var in $(env | grep 'DOMAIN_' | sed  -e 's/=.*//'); do
+for var in $(env | grep -P 'DOMAIN_\d+' | sed  -e 's/=.*//'); do
   cur_domains=${!var};
 
   declare -a arr=$cur_domains;
