@@ -10,7 +10,6 @@ services:
     environment:
       - DOMAIN_1=('haembi.de' 'www.haembi.de' 'blog.haembi.de')
       - DOMAIN_2=('michael-hamburger.de' 'www.michael-hamburger.de' 'blog.michael-hamburger.de')
-      - DOMAIN_COUNT=2
       - CERTBOT_EMAIL=your.mail@mail.de
       - PROXY_ADDRESS=proxy
       - CERTBOT_CRON_RENEW=('0 3 * * *' '0 15 * * *')
