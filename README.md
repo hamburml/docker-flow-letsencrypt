@@ -4,9 +4,9 @@ Docker Flow: Let's Encrypt
 * [Introduction](#introduction)
 * [How does it work](#how-does-it-work)
 * [Usage](#usage)
-* [Feedback and Contribution](#feedback-and-contribution)
+* [Feedback and Contribution](#feedback)
 
-## Introduction
+## Introduction
 
 This project is compatible with Viktor Farcic's [Docker Flow: Proxy](https://github.com/vfarcic/docker-flow-proxy) and [Docker Flow: Swarm Listener](https://github.com/vfarcic/docker-flow-swarm-listener).
 It uses certbot-auto to create and renew ssl certificates from Let’s Encrypt for your domains and stores them inside /etc/letsencrypt thus it requires a persistant storage.
@@ -16,7 +16,7 @@ The service setups a cron which runs by default two times a day (03:00 and 15:00
 
 You can find this project also on [Docker Hub](https://hub.docker.com/r/hamburml/docker-flow-letsencrypt/).
 
-## How does it work
+## How does it work
 
 This docker image uses certbot-auto, curl and cron to create and renew your Let’s Encrypt certificates.
 Through environment variables you set the domains certbot-auto should create certificates for, which e-mail is used by Let’s Encrypt when you lose the account and want to get it back, the cronjob starting times and the dns-name of [Docker Flow: Proxy](https://github.com/vfarcic/docker-flow-proxy).
@@ -31,7 +31,7 @@ If you only want to test this image you should add ```-e CERTBOTMODE="staging"``
 
 Certbot-auto is called with  ```--rsa-key-size 4096 --redirect --hsts --staple-ocsp``` for improved security.
 
-## Usage
+## Usage
 
 ### [Build](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/build)
 ```
@@ -154,7 +154,7 @@ Certificate not yet due for renewal; no action taken.
 ...
 ```
 
-## Feedback
+## Feedback
 
 Thanks for using docker-flow-letsencrypt. If you have problems or some ideas how this can be made better feel free to create a new issue. Thanks to Viktor Farcic for his help and docker flow :)
 
