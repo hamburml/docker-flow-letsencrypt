@@ -38,6 +38,24 @@ Certbot-auto is called with  ```--rsa-key-size 4096 --redirect --hsts --staple-o
 docker build -t hamburml/docker-flow-letsencrypt .
 ```
 
+### Attention! Create /etc/letsencrypt folder before you start the service.
+
+Assuming you are planning to run this service on `node-1`.
+```
+docker-machine ssh node-1 "sudo mkdir -p /etc/letsencrypt"
+```
+
+### Optional: add awesome swarm visualizer by manomarks
+
+```
+LEADER_PUBLIC_IP=$(docker-machine ip node-1)
+docker rm -f swarm_visualizer 2> /dev/null
+docker run -it --restart=always -d --name swarm_visualizer \
+        -p 8000:8080 -e HOST=${LEADER_PUBLIC_IP} \
+        -v /var/run/docker.sock:/var/run/docker.sock \
+        manomarks/visualizer:latest
+open http://${LEADER_PUBLIC_IP}:8000/
+```
 ### [Run](https://github.com/hamburml/docker-flow-letsencrypt/blob/master/run)
 
 Attention! If you use local storage, create the `/etc/letsencrypt` folder before you start the service.
