@@ -9,7 +9,8 @@ ENV DEBIAN_FRONTEND=noninteractive \
     PATH="$PATH:/root"
 
 # http://stackoverflow.com/questions/33548530/envsubst-command-getting-stuck-in-a-container
-RUN apk add --no-cache bash
+RUN apk add --no-cache bash \
+    curl
 
 # Run the command on container startup
 ENTRYPOINT ["/bin/bash"]
