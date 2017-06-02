@@ -11,9 +11,8 @@ ENV DEBIAN_FRONTEND=noninteractive \
 # http://stackoverflow.com/questions/33548530/envsubst-command-getting-stuck-in-a-container
 RUN apk add --no-cache bash
 
+# Run the command on container startup
 ENTRYPOINT ["/bin/bash"]
 
-# Run the command on container startup
-CMD ["/bin/bash"]
 
 EXPOSE 80
