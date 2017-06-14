@@ -160,4 +160,4 @@ Thanks for using docker-flow-letsencrypt. If you have problems or some ideas how
 
 <a href='https://ko-fi.com/A130K9R' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi2.png?v=f' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a> 
 
-I am a student and I have founded a game-development startup with other students. My income is relatively low so I really appreciate every cup of coffee ;) Thank you :)
+I am a student and I have founded a game-development startup with other students. My income is relatively low so I really appreciate every cup of coffee. Thank you :)
