@@ -46,9 +46,9 @@ for var in $(env | grep -P 'DOMAIN_\d+' | sed  -e 's/=.*//'); do
       exitcode=$?
 
       if [ $tries -eq $MAXRETRIES ]; then
-        printf "${RED}Unable to verfiy domain ownership after ${tries} attempts.${NC}\n"
+        printf "${RED}Unable to verify domain ownership after ${tries} attempts.${NC}\n"
       else
-        printf "${RED}Unable to verfiy domain ownership, we try again in ${TIMEOUT} seconds.${NC}\n"
+        printf "${RED}Unable to verify domain ownership, we try again in ${TIMEOUT} seconds.${NC}\n"
         sleep $TIMEOUT
       fi
     done
