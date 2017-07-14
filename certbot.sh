@@ -15,7 +15,7 @@ printf "${GREEN}Docker Flow: Let's Encrypt started${NC}\n";
 printf "We will use $CERTBOT_EMAIL for certificate registration with certbot. This e-mail is used by Let's Encrypt when you lose the account and want to get it back.\n";
 
 #common arguments
-args=("--no-self-upgrade" "--standalone" "--non-interactive" "--expand" "--keep-until-expiring" "--email" "$CERTBOT_EMAIL" "--agree-tos" "--preferred-challenges" "http-01" "--rsa-key-size" "4096" "--redirect" "--hsts" "--staple-ocsp")
+args=("--no-self-upgrade" "--no-bootstrap" "--standalone" "--non-interactive" "--expand" "--keep-until-expiring" "--email" "$CERTBOT_EMAIL" "--agree-tos" "--preferred-challenges" "http-01" "--rsa-key-size" "4096" "--redirect" "--hsts" "--staple-ocsp")
 
 #if we are in a staging enviroment append the staging argument, the staging argument
 #was previously set to an empty string if the staging enviroment was not used
