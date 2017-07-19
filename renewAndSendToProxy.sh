@@ -40,6 +40,9 @@ for d in /etc/letsencrypt/live/*/ ; do
     #send to proxy, retry up to 5 times with a timeout of $TIMEOUT seconds
     printf "${GREEN}transmit $folder.combined.pem to $PROXY_ADDRESS${NC}\n"
 
+    #reset tries to 0
+    TRIES=0
+
     exitcode=0
     until [ $TRIES -ge $MAXRETRIES ]
     do
