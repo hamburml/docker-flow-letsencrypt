@@ -16,6 +16,44 @@ TIMEOUT=5
 
 printf "${GREEN}Hello! renewAndSendToProxy runs. Today is $(date)${NC}\n"
 
+# send current certificates to proxy - after that do a certbot renew round (which could take some seconds) and send updated certificates to proxy (faster startup with https when old certificates are still valid)
+for d in /etc/letsencrypt/live/*/ ; do
+    #move to directory
+    cd $d
+
+    #get directory name (which is the name of the regular domain)
+    folder=${PWD##*/}
+
+    #concat certificates
+    printf "old certificates for $folder will be send to proxy\n"
+    cat cert.pem chain.pem privkey.pem > $folder.combined.pem
+
+    #send to proxy, retry up to 5 times with a timeout of $TIMEOUT seconds
+
+    #reset tries to 0
+    TRIES=0
+    exitcode=0
+    until [ $TRIES -ge $MAXRETRIES ]
+    do
+      TRIES=$[$TRIES+1]
+      curl --silent --show-error -i -XPUT \
+           --data-binary @$folder.combined.pem \
+           "$PROXY_ADDRESS:8080/v1/docker-flow-proxy/cert?certName=$folder.combined.pem&distribute=true" > /var/log/dockeroutput.log && break
+      exitcode=$?
+      if [ $TRIES -eq $MAXRETRIES ]; then
+        printf "old certificate: ${RED}transmit failed after ${TRIES} attempts.${NC}\n"
+      else
+        printf "old certificate: ${RED}transmit failed, we try again in ${TIMEOUT} seconds.${NC}\n"
+        sleep $TIMEOUT
+      fi
+    done
+
+    if [ $exitcode -eq 0 ]; then
+      printf "old certificates: proxy received $folder.combined.pem\n"
+    fi
+done
+
+
 #full path is needed or it is not started when run as cron
 
 #--no-bootstrap: prevent the certbot-auto script from installing OS-level dependencies
