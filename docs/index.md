@@ -8,6 +8,7 @@ This companion service creates and renews Let's Encrypt Certificates and reconfi
 With Let's Encrypt we can create certificates, which were then signed by them. All Operating Systems and Browsers who trust Let's Encrypt automatically accept certificates signed by them. 
 
 In short: 
+
 <img style='border:0px;height:228px;' src='chrome_https.png' border='1' />
 
 A Certificate is 
