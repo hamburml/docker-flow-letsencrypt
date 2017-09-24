@@ -24,3 +24,5 @@ docker service create --name letsencrypt-companion \
 ```
 
 This companion tries to create two certificates for domain1.de and domain2.de. The subdomains are added as `Names per Certificate`. The certbot-client runs runs by default two times a day (03:00 and 15:00 UTC). The Docker Flow: proxy is named `proxy`. The CA uses CERTBOT_EMAIL to send notification emails when the certificate isn't renewed.
+
+The certificates are stored inside /etc/letsencrypt. Docker Flow: Proxy also supports certificates stored into docker secrets. This companion doesn't support docker secrets for now, because when a secret is updated all running docker services, which have access to this specific secret, are restarted. A restart of Docker Flow: Proxy would mean that ALL services aren't reachable anymore.
