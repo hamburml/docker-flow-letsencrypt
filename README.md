@@ -1,4 +1,7 @@
-Docker Flow: Let's Encrypt
+Docker Flow: Let's Encrypt  
+[![GitHub release](https://img.shields.io/github/release/hamburml/docker-flow-letsencrypt.svg)]()
+[![license](https://img.shields.io/github/license/hamburml/docker-flow-letsencrypt.svg)]()
+[![Docker Pulls](https://img.shields.io/docker/pulls/hamburml/docker-flow-letsencrypt.svg)]()
 ==================
 
 * [Introduction](#introduction)
