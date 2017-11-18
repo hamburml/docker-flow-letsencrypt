@@ -7,7 +7,7 @@ fi
 
 printf "Starting Docker Flow: Let's Encrypt\n"
 
-/root/certbot.sh > /var/log/dockeroutput.log 
+. /root/certbot.sh > /var/log/dockeroutput.log
 
 printf "\033[0;31mStarting supervisord (which starts and monitors cron) \033[0m\n"
 

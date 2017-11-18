@@ -34,6 +34,11 @@ for var in $(env | grep -P 'DOMAIN_\d+' | sed  -e 's/=.*//'); do
 
   declare -a arr=$cur_domains;
 
+  if [ "$num" -eq "1" ]
+  then
+      export DEFAULT_DOMAIN=${arr[0]};
+  fi
+
   DOMAINDIRECTORY="/etc/letsencrypt/live/${arr[0]}";
   dom="";
   for i in "${arr[@]}"
