@@ -31,10 +31,11 @@ fi
 
 for var in $(env | grep -P 'DOMAIN_\d+' | sed  -e 's/=.*//'); do
   cur_domains=${!var};
+  num_domain=${var:7}
 
   declare -a arr=$cur_domains;
 
-  if [ "$num" -eq "1" ]
+  if [ "$num_domain" -eq "1" ]
   then
       export DEFAULT_DOMAIN=${arr[0]};
   fi
