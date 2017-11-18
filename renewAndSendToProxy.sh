@@ -16,6 +16,10 @@ TIMEOUT=5
 
 printf "${GREEN}Hello! renewAndSendToProxy runs. Today is $(date)${NC}\n"
 
+#read default_domain_file.conf and remove spaces
+default_domain_file=$(<default_domain_file.conf)
+default_domain=$(echo $default_domain_file | xargs)
+
 # send current certificates to proxy - after that do a certbot renew round (which could take some seconds) and send updated certificates to proxy (faster startup with https when old certificates are still valid)
 for d in /etc/letsencrypt/live/*/ ; do
     #move to directory
@@ -25,6 +29,13 @@ for d in /etc/letsencrypt/live/*/ ; do
     folder=${PWD##*/}
 
     #concat certificates
+    printf "old certificates for $folder will be send to proxy\n"
+    if [[ "$folder" == "$default_domain" ]]; then
+       #default domain
+       folder="00000000${folder}"
+       echo $folder
+    fi
+
     printf "old certificates for $folder will be send to proxy\n"
     cat cert.pem chain.pem privkey.pem > $folder.combined.pem
 
@@ -72,6 +83,13 @@ for d in /etc/letsencrypt/live/*/ ; do
 
     #concat certificates
     printf "concat certificates for $folder\n"
+    
+    if [[ "$folder" == "$default_domain" ]]; then
+       #default domain
+       folder="00000000${folder}"
+       echo $folder
+    fi
+
     cat cert.pem chain.pem privkey.pem > $folder.combined.pem
     printf "${GREEN}generated $folder.combined.pem${NC}\n"
 

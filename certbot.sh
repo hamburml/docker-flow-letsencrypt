@@ -37,7 +37,9 @@ for var in $(env | grep -P 'DOMAIN_\d+' | sed  -e 's/=.*//'); do
 
   if [ "$num_domain" -eq "1" ]
   then
-      export DEFAULT_DOMAIN=${arr[0]};
+      cat > default_domain_file.conf <<EOF
+      ${arr[0]}
+EOF
   fi
 
   DOMAINDIRECTORY="/etc/letsencrypt/live/${arr[0]}";
