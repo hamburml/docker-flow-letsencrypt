@@ -5,7 +5,7 @@ FROM ubuntu:16.04
 ENV DEBIAN_FRONTEND=noninteractive \
     CERTBOT_EMAIL="" \
     PROXY_ADDRESS="proxy" \
-    CERTBOT_CRON_RENEW="('0 3 * * *' '0 15* * *')" \
+    CERTBOT_CRON_RENEW="('0 3 * * *' '0 15 * * *')" \
     PATH="$PATH:/root"
 
 # http://stackoverflow.com/questions/33548530/envsubst-command-getting-stuck-in-a-container
