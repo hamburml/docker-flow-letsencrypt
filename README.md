@@ -11,7 +11,7 @@ Docker Flow: Let's Encrypt
 
 ## Introduction
 
-This project is compatible with Viktor Farcic's [Docker Flow: Proxy](https://github.com/docker-flow/docker-flow-proxy) and [Docker Flow: Swarm Listener](https://github.com/vfarcic/docker-flow-swarm-listener).
+This project is compatible with Viktor Farcic's [Docker Flow: Proxy](https://github.com/docker-flow/docker-flow-proxy) and [Docker Flow: Swarm Listener](https://github.com/docker-flow/docker-flow-swarm-listener).
 It uses certbot-auto to create and renew ssl certificates from Let’s Encrypt for your domains and stores them inside /etc/letsencrypt thus it requires a persistant storage.
 You can bind a folder from the host and use a constraint to make sure the companion service always runs on the same host or use storage plugins such as [rexray](https://github.com/codedellemc/rexray) to allow data to follow your container on other nodes.
 
