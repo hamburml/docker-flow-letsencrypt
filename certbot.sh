@@ -50,7 +50,7 @@ EOF
     until [ $tries -ge $MAXRETRIES ]
     do
       tries=$[$tries+1]
-      certbot-auto certonly --dry-run "${args[@]}" -d "$i" | grep -q 'The dry run was successful.' && break
+      certbot-auto certonly "${args[@]}" -d "$i" | grep -q 'The dry run was successful.' && break
       exitcode=$?
 
       if [ $tries -eq $MAXRETRIES ]; then
