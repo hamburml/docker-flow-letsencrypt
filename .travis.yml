@@ -1,0 +1,32 @@
+sudo: required
+
+language: bash
+
+service:
+    - docker
+
+before_install:
+    - wget https://github.com/clnperez/cli/releases/download/1.0/docker-linux-amd64
+    - chmod 755 docker-linux-amd64
+    - docker pull multiarch/qemu-user-static:register
+    - docker run --rm --privileged multiarch/qemu-user-static:register --reset
+    - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+
+script:
+    - make arm64v8
+    - make amd64
+    - make arm32v7
+
+
+after_success:
+    - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+    - docker push $REPO/$IMAGE_NAME:amd64
+    - docker push $REPO/$IMAGE_NAME:arm32v7
+    - docker push $REPO/$IMAGE_NAME:arm64v8
+    - ./docker-linux-amd64 -v 
+    - ./docker-linux-amd64 manifest create $REPO/$IMAGE_NAME:latest $REPO/$IMAGE_NAME:amd64 $REPO/$IMAGE_NAME:arm32v7 $REPO/$IMAGE_NAME:arm64v8 -a
+    - ./docker-linux-amd64 manifest inspect $REPO/$IMAGE_NAME:latest
+    - ./docker-linux-amd64 manifest annotate $REPO/$IMAGE_NAME:latest $REPO/$IMAGE_NAME:amd64
+    - ./docker-linux-amd64 manifest annotate $REPO/$IMAGE_NAME:latest $REPO/$IMAGE_NAME:arm32v7 --os linux --arch arm
+    - ./docker-linux-amd64 manifest annotate $REPO/$IMAGE_NAME:latest $REPO/$IMAGE_NAME:arm64v8 --os linux --arch arm64 --variant armv8
+    - ./docker-linux-amd64 manifest push $REPO/$IMAGE_NAME:latest
