@@ -11,11 +11,13 @@ MAXRETRIES=5
 #timeout
 TIMEOUT=5
 
+: ${CERTBOT_KEY_SIZE:='4096'}
+
 printf "${GREEN}Docker Flow: Let's Encrypt started${NC}\n";
 printf "We will use $CERTBOT_EMAIL for certificate registration with certbot. This e-mail is used by Let's Encrypt when you lose the account and want to get it back.\n";
 
 #common arguments
-args=("--no-self-upgrade" "--no-bootstrap" "--standalone" "--non-interactive" "--expand" "--keep-until-expiring" "--email" "$CERTBOT_EMAIL" "--agree-tos" "--preferred-challenges" "http-01" "--rsa-key-size" "4096" "--redirect" "--hsts" "--staple-ocsp")
+args=("--no-self-upgrade" "--no-bootstrap" "--standalone" "--non-interactive" "--expand" "--keep-until-expiring" "--email" "$CERTBOT_EMAIL" "--agree-tos" "--preferred-challenges" "http-01" "--rsa-key-size" "$CERTBOT_KEY_SIZE" "--redirect" "--hsts" "--staple-ocsp")
 
 #if we are in a staging enviroment append the staging argument, the staging argument
 #was previously set to an empty string if the staging enviroment was not used
@@ -75,9 +77,9 @@ done
 
 #prepare renewcron
 if [ "$CERTBOTMODE" ]; then
-  printf "SHELL=/bin/sh\nPATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin\nPROXY_ADDRESS=$PROXY_ADDRESS\nCERTBOTMODE=$CERTBOTMODE\n" > /etc/cron.d/renewcron 
+  printf "SHELL=/bin/sh\nPATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin\nPROXY_ADDRESS=$PROXY_ADDRESS\nCERTBOTMODE=$CERTBOTMODE\n" > /etc/cron.d/renewcron
 else
-  printf "SHELL=/bin/sh\nPATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin\nPROXY_ADDRESS=$PROXY_ADDRESS\n" > /etc/cron.d/renewcron 
+  printf "SHELL=/bin/sh\nPATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin\nPROXY_ADDRESS=$PROXY_ADDRESS\n" > /etc/cron.d/renewcron
 fi
 
 
