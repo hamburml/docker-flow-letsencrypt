@@ -1,5 +1,5 @@
-#use 16.04 lts, install certbot-auto to get newest certbot version
-FROM ubuntu:16.04
+#use 18.04 lts
+FROM ubuntu:18.04
 
 #set default env variables
 ENV DEBIAN_FRONTEND=noninteractive \
@@ -10,14 +10,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 
 # http://stackoverflow.com/questions/33548530/envsubst-command-getting-stuck-in-a-container
 RUN apt-get update && \
-    apt-get -y install cron supervisor curl && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-# install certbot-auto
-RUN curl -o /root/certbot-auto https://dl.eff.org/certbot-auto && \
-    chmod a+x /root/certbot-auto && \
-    /root/certbot-auto --version --non-interactive && \
-    apt-get purge -y --auto-remove gcc libc6-dev && \
+    apt-get -y install cron supervisor curl certbot && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Add supervisord.conf

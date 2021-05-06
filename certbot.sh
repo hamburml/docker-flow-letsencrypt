@@ -31,43 +31,46 @@ fi
 
 for var in $(env | grep -P 'DOMAIN_\d+' | sed  -e 's/=.*//'); do
   cur_domains=${!var};
-
   declare -a arr=$cur_domains;
 
   DOMAINDIRECTORY="/etc/letsencrypt/live/${arr[0]}";
   dom="";
   for i in "${arr[@]}"
   do
-    let exitcode=tries=0
+    let validated=tries=0
     until [ $tries -ge $MAXRETRIES ]
     do
       tries=$[$tries+1]
-      certbot-auto certonly --dry-run "${args[@]}" -d "$i" | grep -q 'The dry run was successful.' && break
-      exitcode=$?
-
-      if [ $tries -eq $MAXRETRIES ]; then
-        printf "${RED}Unable to verify domain ownership after ${tries} attempts.${NC}\n"
+      certbot certonly --dry-run "${args[@]}" -d "$i" | grep -q 'The dry run was successful.'
+      if [ $? -eq 0 ]; then
+        validated=1
+        break
       else
-        printf "${RED}Unable to verify domain ownership, we try again in ${TIMEOUT} seconds.${NC}\n"
-        sleep $TIMEOUT
+        if [ $tries -eq $MAXRETRIES ]; then
+          printf "${RED}Unable to verify domain ownership after ${tries} attempts.${NC}\n"
+        else
+          printf "${RED}Unable to verify domain ownership, we try again in ${TIMEOUT} seconds.${NC}\n"
+          sleep $TIMEOUT
+        fi
       fi
-    done
 
-    if [ $exitcode -eq 0 ]; then
+    done
+    echo "Validated is $validated"
+    if [ $validated -eq 1 ]; then
       printf "Domain $i successfully validated\n"
       dom="$dom -d $i"
     fi
   done
-
+  
   #only if we have successfully validated at least a single domain we have to continue
   if [ -n "$dom" ]; then
     # check if DOMAINDIRECTORY exists, if it exists use --cert-name to prevent 0001 0002 0003 folders
     if [ -d "$DOMAINDIRECTORY" ]; then
-      printf "\nUse certbot-auto certonly %s --cert-name %s\n" "${args[*]}" "${arr[0]}";
-      certbot-auto certonly "${args[@]}" --cert-name "${arr[0]}" $dom
+      printf "\nUse certbot certonly %s --cert-name %s\n" "${args[*]}" "${arr[0]}";
+      certbot certonly "${args[@]}" --cert-name "${arr[0]}" $dom
     else
-      printf "\nUse certbot-auto certonly %s\n" "${args[*]}";
-      certbot-auto certonly "${args[@]}" $dom
+      printf "\nUse certbot certonly %s\n" "${args[*]}";
+      certbot certonly "${args[@]}" $dom
     fi
   fi
 
